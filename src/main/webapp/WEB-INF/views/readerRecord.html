@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>读者借还记录-FP图书管理系统</title>
+    <script src="/js/jquery-3.4.1.js"></script>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/own.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/css/record.css" />
+    <link rel="stylesheet" type="text/css" href="/css/book.css" />
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+               url:"/record/queryAll",
+                type:"POST",
+                dataType: "json",
+                async: false,
+                success:function (data) {
+                    var table_content = "<thead><tr><th>记录号</th><th>图书编号</th><th>借阅人</th><th>经手管理员</th><th>借的时间</th>" +
+                        "<th>归还时间</th><th>操作</th></tr></thead>";
+                    var list = data.list;
+                    table_content += "<tbody>";
+                    for(var i= 0;i<list.length;i++){
+                        table_content += "<tr><td>"+list[i].record_id+"</td><td>"+list[i].record_book+"</td>" + "<td>"+list[i].record_reader+"</td>"+
+                            "<td>"+list[i].record_admin+"</td><td>"+list[i].record_borrow+"</td><td>"+((list[i].record_return==null)?((list[i].record_is_lost==1)?"已挂失":"尚未归还"):((list[i].record_is_lost==1)?"已挂失":(list[i].record_return)))+"</td>" +
+                            "<td>";
+                        if(list[i].record_is_return==1){
+                            // tbody += "<div class='admin-do' id='book-return'>归还</div><div class='admin-do' id='book-lost'>挂失</div>"
+                            table_content += "<div class='admin-do' id='record-delete' onclick='record_delete(this)'>删除</div></td></tr>";
+                        }
+                        else if(list[i].record_is_lost==1) {
+                            table_content += "<div class='admin-do' id='record-delete' onclick='record_delete(this)'>删除</div></td></tr>";
+                        }
+                        else{
+                            table_content += "<div class='admin-do' id='book-return' onclick='book_return(this)'>归还</div><div class='admin-do' id='book-lost' onclick='book_lost(this)'>挂失</div></td></tr>";
+                        }
+                    }
+                    table_content += "</tbody>";
+                    $("#query-record-list").html(table_content);
+                    var nav = "<div class='bar-div' name='first' onclick='jp(this)'><span class='btn-page btn-default'>首页</span></div>";
+                    if(data.isFirstPage==false){
+                        nav += "<div class='bar-div' name='before' id='"+data.pageNum+"' onclick='jp(this)'><span class='btn-page btn-default'>上一页</span></div>";
+                    }
+                    for(var i =0;i<data.navigatepageNums.length;i++){
+                        nav += "<div class='bar-div' name='"+(data.navigatepageNums[i])+"' onclick='jp(this)' id='"+(data.navigatepageNums[i])+"'";
+                        if(data.pageNum==data.navigatepageNums[i]){
+                            nav += "><span class='btn-page btn-active'>"+(data.navigatepageNums[i])+"</span></div>";
+                        }
+                        else{
+                            nav += "><span class='btn-page btn-default'>"+(data.navigatepageNums[i])+"</span></div>";
+                        }
+                    }
+                    if(data.isLastPage==false){
+                        nav += "<div class='bar-div' name='next' id='"+data.pageNum+"' onclick='jp(this)'><span class='btn-page btn-default'>下一页</span></div>";
+                    }
+                    nav += "<div class='bar-div' name='end' id='"+data.lastPage+"' onclick='jp(this)'><span class='btn-page btn-default'>尾页</span></div>";
+                    $("#nav-bar").html(nav);
+                },
+                error:function () {
+                    console.log("show reader record error");
+                }
+            });
+            $("#record-query").click(function () {
+                $.ajax({
+                    url: "/record/queryWant",
+                    type:"POST",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    data:JSON.stringify($("#query-book-form").serializeJson()),
+                    success:function (data) {
+                        var table_content = "<thead><tr><th>记录号</th><th>图书编号</th><th>借阅人</th><th>经手管理员</th><th>借的时间</th>" +
+                            "<th>归还时间</th><th>操作</th></tr></thead>";
+                        var list = data.list;
+                        // var table_content = "";
+                        table_content += "<tbody>";
+                        for(var i= 0;i<list.length;i++){
+                            table_content += "<tr><td>"+list[i].record_id+"</td><td>"+list[i].record_book+"</td>" + "<td>"+list[i].record_reader+"</td>"+
+                                "<td>"+list[i].record_admin+"</td><td>"+list[i].record_borrow+"</td><td>"+((list[i].record_return==null)?"尚未归还":((list[i].record_is_lost==1)?((list[i].record_is_lost==1)?"已挂失":"尚未归还"):(list[i].record_return)))+"</td>" +
+                                "<td>";
+                            if(list[i].record_is_return==1){
+                                // tbody += "<div class='admin-do' id='book-return'>归还</div><div class='admin-do' id='book-lost'>挂失</div>"
+                                table_content += "<div class='admin-do' id='record-delete' onclick='record_delete(this)'>删除</div></td></tr>";
+                            }
+                            else if(list[i].record_is_lost==1) {
+                                table_content += "<div class='admin-do' id='record-delete' onclick='record_delete(this)'>删除</div></td></tr>";
+                            }
+                            else{
+                                table_content += "<div class='admin-do' id='book-return' onclick='book_return(this)'>归还</div><div class='admin-do' id='book-lost' onclick='book_lost(this)'>挂失</div></td></tr>";
+                            }
+                        }
+                        table_content += "</tbody>";
+                        $("#query-record-list").html(table_content);
+                        var nav = "<div class='bar-div' name='first' onclick='jp(this)'><span class='btn-page btn-default'>首页</span></div>";
+                        if(data.isFirstPage==false){
+                            nav += "<div class='bar-div' name='before' id='"+data.pageNum+"' onclick='jp(this)'><span class='btn-page btn-default'>上一页</span></div>";
+                        }
+                        for(var i =0;i<data.navigatepageNums.length;i++){
+                            nav += "<div class='bar-div' name='"+(data.navigatepageNums[i])+"' onclick='jp(this)' id='"+(data.navigatepageNums[i])+"'";
+                            if(data.pageNum==data.navigatepageNums[i]){
+                                nav += "><span class='btn-page btn-active'>"+(data.navigatepageNums[i])+"</span></div>";
+                            }
+                            else{
+                                nav += "><span class='btn-page btn-default'>"+(data.navigatepageNums[i])+"</span></div>";
+                            }
+                        }
+                        if(data.isLastPage==false){
+                            nav += "<div class='bar-div' name='next' id='"+data.pageNum+"' onclick='jp(this)'><span class='btn-page btn-default'>下一页</span></div>";
+                        }
+                        nav += "<div class='bar-div' name='end' id='"+data.lastPage+"' onclick='jp(this)'><span class='btn-page btn-default'>尾页</span></div>";
+                        $("#nav-bar").html(nav);
+                    },
+                    error:function () {
+                        console.log("filter error!");
+                    }
+                });
+            });
+            // $("#book-return").click(function () {
+            //     var record_id = $(this).parent().prev().prev().prev().prev().prev().prev().text();
+            //     $.ajax({
+            //         url: "/record/return?record_id="+record_id,
+            //         type:"POST",
+            //         dataType: "text",
+            //         async: false,
+            //         success:function (data) {
+            //             window.location.href = "/view/showReaderRecord";
+            //         },
+            //         error:function () {
+            //             console.log("book return occur error!");
+            //         }
+            //     });
+            // });
+            // $("#book-lost").click(function () {
+            //     var record_id = $(this).parent().prev().prev().prev().prev().prev().prev().text();
+            //     $.ajax({
+            //        url:"/record/setLost?record_id="+record_id,
+            //         type:"POST",
+            //         dataType: "text",
+            //         async: false,
+            //         success:function (data) {
+            //             window.location.href = "/view/showReaderRecord";
+            //         },
+            //         error:function () {
+            //             console.log("set book lost occur error!");
+            //         }
+            //     });
+            // });
+            // $("#record-delete").click(function () {
+            //     var record_id = $(this).parent().prev().prev().prev().prev().prev().prev().text();
+            //     $.ajax({
+            //         url:"/record/delete?record_id="+record_id,
+            //         type:"POST",
+            //         dataType: "text",
+            //         async: false,
+            //         success:function (data) {
+            //             window.location.href = "/view/showReaderRecord";
+            //         },
+            //         error:function () {
+            //           console.log("delete record occur error!")
+            //         }
+            //     });
+            // });
+        });
+    </script>
+</head>
+<body>
+    <div class="container book-query-content">
+        <div class="row book-query-row-outer">
+            <div class="col-md-12 container book-query-container">
+                <div class="row">
+                    <form id="query-book-form">
+                        <div class="form-group container query-book-form">
+                            <div class="row">
+                                <div class="col-xs-6 query-book-form-row">
+                                    <span>图书编号</span>
+                                    <input type="text" class="form-control" name="record_book" placeholder="请输入图书的编号" autocomplete="off" />
+                                </div>
+                                <div class="col-xs-6 query-book-form-row">
+                                    <span>读者号</span>
+                                    <input type="text" class="form-control" name="record_reader" placeholder="请输入读者号" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 query-book-form-row">
+                                    <span>是否归还</span>
+                                    <input type="radio" class="form-radio" name="record_is_return" value="1" />
+                                </div>
+                                <div class="col-xs-6 query-book-form-row">
+                                    <span>是否超时</span>
+                                    <input type="radio" class="form-radio" name="record_is_overtime" value="1" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <input type="button" class="button btn-info form-btn" value="过滤" id="record-query" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <table class="table table-hover" id="query-record-list"></table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12" id="nav-bar"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

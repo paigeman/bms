@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>借阅记录-FP图书管理系统</title>
+    <script src="/js/jquery-3.4.1.js"></script>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/own.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/css/record.css" />
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url:"/record/querySpecificReader",
+                type:"POST",
+                dataType: "json",
+                async: false,
+                success:function (data) {
+                    var table_content = "<thead><tr><th>记录号</th><th>图书编号</th><th>经手管理员</th><th>借的时间</th>" +
+                        "<th>归还时间</th></tr></thead>"
+                    var list = data.list;
+                    table_content += "<tbody>";
+                    for(var i= 0;i<list.length;i++){
+                        table_content += "<tr><td>"+list[i].record_id+"</td><td>"+list[i].record_book+"</td>" +
+                            "<td>"+list[i].record_admin+"</td><td>"+list[i].record_borrow+"</td><td>"+((list[i].record_return==null)?"尚未归还":list[i].record_return)+"</td></tr>";
+                    }
+                    table_content += "</tbody>"
+                    $("#query-record-list").html(table_content);
+                    var nav = "<div class='bar-div' name='first' onclick='jmp(this)'><span class='btn-page btn-default'>首页</span></div>";
+                    if(data.isFirstPage==false){
+                        nav += "<div class='bar-div' name='before' id='"+data.pageNum+"' onclick='jmp(this)'><span class='btn-page btn-default'>上一页</span></div>";
+                    }
+                    for(var i =0;i<data.navigatepageNums.length;i++){
+                        nav += "<div class='bar-div' name='"+(data.navigatepageNums[i])+"' onclick='jmp(this)' id='"+(data.navigatepageNums[i])+"'";
+                        if(data.pageNum==data.navigatepageNums[i]){
+                            nav += "><span class='btn-page btn-active'>"+(data.navigatepageNums[i])+"</span></div>";
+                        }
+                        else{
+                            nav += "><span class='btn-page btn-default'>"+(data.navigatepageNums[i])+"</span></div>";
+                        }
+                    }
+                    if(data.isLastPage==false){
+                        nav += "<div class='bar-div' name='next' id='"+data.pageNum+"' onclick='jmp(this)'><span class='btn-page btn-default'>下一页</span></div>";
+                    }
+                    nav += "<div class='bar-div' name='end' id='"+data.lastPage+"' onclick='jmp(this)'><span class='btn-page btn-default'>尾页</span></div>";
+                    $("#nav-bar").html(nav);
+                    var goon = "<div class='bar-div'><span class='btn btn-info'>继续借书</span></div>"
+                    $("#go-on-borrow").html(goon);
+                },
+                error:function () {
+                    console.log("show record error");
+                }
+            });
+            $("#go-on-borrow").click(function () {
+                $("#nav-li-2",parent.document).css("background-color","#ea5455");
+                $("#nav-li-2",parent.document).css("color","#fff");
+                $("#nav-li-1",parent.document).css("background-color","#fff");
+                $("#nav-li-1",parent.document).css("color","#626262");
+                $("#nav-li-3",parent.document).css("background-color","#fff");
+                $("#nav-li-3",parent.document).css("color","#626262");
+                window.location.href = "/view/book";
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container record-content">
+        <div class="row record-row">
+            <div class="col-md-12 record-container container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <table class="table table-hover" id="query-record-list"></table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-xs-offset-3" id="nav-bar"></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12" id="go-on-borrow"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

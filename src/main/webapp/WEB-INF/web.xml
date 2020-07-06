@@ -1,0 +1,37 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+
+  <!-- 设置spring配置文件的位置 -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <!-- 指定applicationContext.xml为spring的配置文件 -->
+    <!-- maven构建项目的时候classpath指的是resources文件夹位置 -->
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+
+  <!--监听器：监听上面配置文件部署在哪-->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <!--SpringMVC的前端控制器，拦截所有请求，负责职责分派-->
+  <servlet>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <!--注意，不要写成了spring的applicationContext.xml-->
+      <param-value>classpath:dispatcher-servlet.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <!-- /表示拦截所有请求 -->
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+</web-app>

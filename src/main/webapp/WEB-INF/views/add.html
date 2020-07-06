@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新书上架-FP图书管理系统</title>
+    <script src="/js/jquery-3.4.1.js"></script>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/own.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/css/profile.css" />
+    <script>
+        $(document).ready(function () {
+            $("#book_add_submit").click(function () {
+                $.ajax({
+                    url:"/book/add",
+                    type: "post",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "text",
+                    data:JSON.stringify($("#profile-form").serializeJson()),
+                    success:function (data) {
+                        if(data=="success"){
+                            window.location.href = "/view/add";
+                        }
+                        else{
+                            console.log("server add error!");
+                        }
+                    },
+                    error:function () {
+                        console.log("add error");
+                    }
+                })
+            });
+            $("#book_add_return").click(function () {
+                window.location.href = "/view/book";
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class='col-xs-8 info-container container col-xs-offset-1'>
+                <div class='row profile-form'>
+                    <form id='profile-form'>
+                        <div class='form-group'>
+                            <label for="book_No" class="form-text">图书编号</label>
+                            <input type="text" class="form-control form-input" name="book_No" id="book_No" autocomplete='off' placeholder="请输入图书编号" />
+                            <label for="book_name" class="form-text">图书名字</label>
+                            <input type="text" class="form-control form-input" name="book_name" id="book_name" autocomplete="off" placeholder="请输入图书的名字" />
+                            <label for="book_author" class="form-text">图书作者</label>
+                            <input type='text' class='form-control form-input' name='book_author' id='book_author' autocomplete='off' placeholder="请输入图书的作者"/>
+                            <label for="book_publisher" class="form-text">图书出版社</label>
+                            <input type="text" class="form-control form-input" name="book_publisher" id="book_publisher" autocomplete="off" placeholder="请输入图书出版社" />
+                            <label for="book_bio" class="form-text">图书简介</label>
+                            <input type="text" class="form-control form-input" name="book_bio" id="book_bio" autocomplete="off" placeholder="请输入图书简介" />
+                            <label class="form-text">图书类别</label>
+                            <select class="form-control" name="book_category" id="book_category">
+                                <option selected="selected" disabled="disabled"  style='display: none' value=''></option>
+                                <option value="哲学、宗教">哲学、宗教</option>
+                                <option value="社会科学总论">社会科学总论</option>
+                                <option value="政治、法律">政治、法律</option>
+                                <option value="军事">军事</option>
+                                <option value="经济">经济</option>
+                                <option value="文学">文学</option>
+                                <option value="艺术">艺术</option>
+                                <option value="文化、科学">文化、科学</option>
+                                <option value="教育、体育">教育、体育</option>
+                            </select>
+                            <label for="book_price" class="form-text">图书价格(元)</label>
+                            <input type="text" class="form-control form-input" name="book_price" id="book_price" autocomplete="off" placeholder="请输入图书价格(元)" />
+                            <label for="book_number" class="form-text">图书剩余数量</label>
+                            <input type="text" class="form-control form-input" name="book_number" id="book_number" autocomplete="off" placeholder="请输入图书的剩余数量"/>
+                            <label for="book_limit" class="form-text">借阅时间限制(天)</label>
+                            <input type="text" class="form-control form-input" name="book_limit" id="book_limit" autocomplete="off" placeholder="请输入借阅时间限制(天)" />
+                            <label for="book_per_day" class="form-text">逾期罚款(元/天)</label>
+                            <input type="text" class="form-control form-input" name="book_per_day" id="book_per_day" autocomplete="off" placeholder="请输入逾期罚款(元/天)" />
+                        </div>
+                        <input type='button' class='button btn-success info-form-btn' value='提交' id='book_add_submit' />
+                        <input type='button' class='button btn-info info-form-btn' value='返回' id='book_add_return' />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

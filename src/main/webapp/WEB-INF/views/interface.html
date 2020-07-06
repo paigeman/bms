@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户中心-FP图书管理系统</title>
+    <script src="/js/jquery-3.4.1.js"></script>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/own.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/css/frame.css" />
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "/reader/profile",
+                type: "post",
+                dataType: "json",
+                // async: false,
+                success: function (data) {
+                    var html = "<li id='nav-li-1'><div>我的账号</div></li>"+"<li id='nav-li-2'><div>借书</div></li>"
+                        +"<li id='nav-li-3'><div>借还记录</div><li id='nav-li-5'><div>罚款缴纳</div></li><li id='nav-li-4'><div>退出登录</div></li>";
+                    $("#frame-nav-ul").html(html);
+                    $("#nav-li-1").css("background-color","#ea5455");
+                    $("#nav-li-1").css("color","#fff");
+                    $("#nav-li-1").click(function () {
+                        $("#nav-li-1").css("background-color","#ea5455");
+                        $("#nav-li-1").css("color","#fff");
+                        $("#nav-li-2").css("background-color","#fff");
+                        $("#nav-li-2").css("color","#626262");
+                        $("#nav-li-3").css("background-color","#fff");
+                        $("#nav-li-3").css("color","#626262");
+                        $("#nav-li-5").css("background-color","#fff");
+                        $("#nav-li-5").css("color","#626262");
+                        $("#frame-html").attr("src","/view/profile");
+                    });
+                    $("#nav-li-2").click(function () {
+                        $("#nav-li-2").css("background-color","#ea5455");
+                        $("#nav-li-2").css("color","#fff");
+                        $("#nav-li-1").css("background-color","#fff");
+                        $("#nav-li-1").css("color","#626262");
+                        $("#nav-li-3").css("background-color","#fff");
+                        $("#nav-li-3").css("color","#626262");
+                        $("#nav-li-5").css("background-color","#fff");
+                        $("#nav-li-5").css("color","#626262");
+                        $("#frame-html").attr("src","/view/book");
+                    });
+                    $("#nav-li-3").click(function () {
+                        $("#nav-li-3").css("background-color","#ea5455");
+                        $("#nav-li-3").css("color","#fff");
+                        $("#nav-li-1").css("background-color","#fff");
+                        $("#nav-li-1").css("color","#626262");
+                        $("#nav-li-2").css("background-color","#fff");
+                        $("#nav-li-2").css("color","#626262");
+                        $("#nav-li-5").css("background-color","#fff");
+                        $("#nav-li-5").css("color","#626262");
+                        $("#frame-html").attr("src","/view/record");
+                    });
+                    $("#nav-li-5").click(function () {
+                        $("#nav-li-5").css("background-color","#ea5455");
+                        $("#nav-li-5").css("color","#fff");
+                        $("#nav-li-1").css("background-color","#fff");
+                        $("#nav-li-1").css("color","#626262");
+                        $("#nav-li-2").css("background-color","#fff");
+                        $("#nav-li-2").css("color","#626262");
+                        $("#nav-li-3").css("background-color","#fff");
+                        $("#nav-li-3").css("color","#626262");
+                    });
+                    $("#nav-li-4").click(function () {
+                        window.location.href = "/view/logout";
+                    });
+                },
+                error:function () {
+                    console.log("show reader profile error");
+                    $.ajax({
+                        url: "/admin/profile",
+                        type: "post",
+                        dataType: "json",
+                        async: false,
+                        success:function (data) {
+                            console.log(data);
+                            var html = "<li id='nav-li-1'><div>我的账号</div></li>"+"<li id='nav-li-2'><div>图书管理</div></li>"
+                                +"<li id='nav-li-3'><div>借还记录</div></li><li id='nav-li-4'><div>退出登录</div></li>";
+                            $("#frame-nav-ul").html(html);
+                            $("#nav-li-1").css("background-color","#ea5455");
+                            $("#nav-li-1").css("color","#fff");
+                            $("#nav-li-1").click(function () {
+                                $("#nav-li-1").css("background-color","#ea5455");
+                                $("#nav-li-1").css("color","#fff");
+                                $("#nav-li-2").css("background-color","#fff");
+                                $("#nav-li-2").css("color","#626262");
+                                $("#nav-li-3").css("background-color","#fff");
+                                $("#nav-li-3").css("color","#626262");
+                                $("#frame-html").attr("src","/view/profile");
+                            });
+                            $("#nav-li-2").click(function () {
+                                $("#nav-li-2").css("background-color","#ea5455");
+                                $("#nav-li-2").css("color","#fff");
+                                $("#nav-li-1").css("background-color","#fff");
+                                $("#nav-li-1").css("color","#626262");
+                                $("#nav-li-3").css("background-color","#fff");
+                                $("#nav-li-3").css("color","#626262");
+                                $("#frame-html").attr("src","/view/book");
+                            });
+                            $("#nav-li-3").click(function () {
+                                $("#nav-li-3").css("background-color","#ea5455");
+                                $("#nav-li-3").css("color","#fff");
+                                $("#nav-li-1").css("background-color","#fff");
+                                $("#nav-li-1").css("color","#626262");
+                                $("#nav-li-2").css("background-color","#fff");
+                                $("#nav-li-2").css("color","#626262");
+                                $("#frame-html").attr("src","/view/showReaderRecord");
+                            });
+                            $("#nav-li-4").click(function () {
+                                window.location.href = "/view/logout";
+                            });
+                        },
+                        error:function () {
+                            console.log("show profile error");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="frame-content">
+        <div class="container frame-nav-container">
+          <div class="row frame-row">
+              <div class="col-md-3 frame-nav">
+                  <div class="frame-nav-menu">
+                      <div class="frame-nav-header">
+                          <span>FP图书管理系统</span>
+                      </div>
+                      <ul id="frame-nav-ul">
+                      </ul>
+                  </div>
+              </div>
+              <div class="col-md-8 col-md-offset-1 frame-html">
+                  <iframe src="/view/profile" id="frame-html"></iframe>
+              </div>
+          </div>
+        </div>
+    </div>
+    <div class="frame-foot">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 foot-container container">
+                    <div class="col-md-5 col-md-offset-4">
+                        <span>&copy;&nbsp;2020.06&nbsp;网工171班&nbsp;杨子江&nbsp;5504117075</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>bms登录-欢迎登录FP图书管理系统</title>
+    <script src="/js/jquery-3.4.1.js"></script>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <!--<script src="../statics/js/bootstrap/bootstrap.bundle.js"></script>
+    <script src="../statics/js/bootstrap/bootstrap.bundle.min.js"></script>-->
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/own.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="../statics/css/bootstrap/bootstrap-grid.css" />
+    <link rel="stylesheet" type="text/css" href="../statics/css/bootstrap/bootstrap-grid.min.css" />
+    <link rel="stylesheet" type="text/css" href="../statics/css/bootstrap/bootstrap-reboot.css" />
+    <link rel="stylesheet" type="text/css" href="../statics/css/bootstrap/bootstrap-reboot.min.css" />-->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <script>
+        $(document).ready(function () {
+            $("#form-admin").css("display","none");
+            $("#identity-reader").click(function () {
+                $("#identity-reader").css("border-bottom","3px solid #ff6a00");
+                $("#identity-admin").css("border-bottom","1px solid #d8d8d8");
+                $("#form-reader").css("display","");
+                $("#form-admin").css("display","none");
+            });
+           $("#identity-admin") .click(function () {
+               $("#identity-admin").css("border-bottom","3px solid #ff6a00");
+               $("#identity-reader").css("border-bottom","1px solid #d8d8d8");
+               $("#form-admin").css("display","");
+               $("#form-reader").css("display","none");
+           });
+           $("#reader_login").click(function () {
+               //var formData = $("#form-1").serializeArray();
+               //console.log(formData);
+               //console.log(formData[0].value);
+               //console.log(formData[1].value);
+               $.ajax({
+                   url: "/reader/login",
+                   type: "POST",
+                   contentType: "application/json;charset=utf-8",
+                   dataType: "text",
+                   //data: {"reader_id":formData[0].value,"reader_pwd":formData[1].value}
+                   //data: JSON.stringify({"reader_id":formData[0].value,"reader_pwd":formData[1].value})
+                   data: JSON.stringify($("#form-1").serializeJson()),
+                   success:function(data){
+                       if(data=="true"){
+                           window.location.href = "/view/interface";
+                       }
+                       else{
+                           window.location.href = "/view/index";
+                       }
+                   }
+               });
+           });
+           $("#reader_register").click(function () {
+               window.location.href = "/view/register";
+           });
+           $("#admin_login").click(function () {
+               $.ajax({
+                   url: "/admin/login",
+                   type: "POST",
+                   contentType: "application/json;charset=utf-8",
+                   dataType: "text",
+                   data:JSON.stringify($("#form-2").serializeJson()),
+                   success:function (data) {
+                       // console.log(data);
+                       if(data=="true"){
+                           window.location.href = "/view/interface";
+                       }
+                       else{
+
+                       }
+                   },
+                   error:function () {
+                       console.log("admin log occur error");
+                   }
+               });
+           });
+        })
+    </script>
+</head>
+<body class="login-body" id="login-success">
+    <div class="nav">
+        <div class="container">
+            <div class="row">
+                <div  class="col-md-3 top-bar-container">
+                    <span class="top-bar-text">FP图书管理系统 | 登录</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 col-md-offset-7 login-container container">
+                    <div class="row">
+                        <div class="col-md-6 identity" id="identity-reader">
+                            <div class="identity-text">读者登录</div>
+                        </div>
+                        <div class="col-md-6 identity" id="identity-admin">
+                            <div class="identity-text">管理员登录</div>
+                        </div>
+                    </div>
+                    <div class="row form form-display" id="form-reader">
+                        <form id="form-1">
+                            <div class="form-group">
+                                <label for="reader_id" class="form-text">读者ID</label>
+                                <input type="text" class="form-control form-input" name="reader_id" id="reader_id" placeholder="读者ID" autocomplete="off" />
+                                <label for="reader_pwd" class="form-text">密码</label>
+                                <input type="password" class="form-control form-input" name="reader_pwd" id="reader_pwd" placeholder="请输入登录密码" autocomplete="off" />
+                            </div>
+                            <input type="button" class="button btn-success form-btn" value="登录" id="reader_login" />
+                            <input type="button" class="button btn-warning form-btn" value="注册" id="reader_register" />
+                        </form>
+                    </div>
+                    <div class="row form form-hidden" id="form-admin">
+                        <form id="form-2">
+                            <div class="form-group">
+                                <label for="admin_id" class="form-text">管理员ID</label>
+                                <input type="text" class="form-control form-input" name="admin_id" id="admin_id" placeholder="管理员ID" autocomplete="off" />
+                                <label for="admin_pwd" class="form-text">密码</label>
+                                <input type="password" class="form-control form-input" name="admin_pwd" id="admin_pwd" placeholder="请输入登录密码" autocomplete="off" />
+                            </div>
+                            <input type="button" class="button btn-success form-btn" value="登录" id="admin_login" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="foot">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 foot-container container">
+                    <div class="col-md-5 col-md-offset-4">
+                        <span>&copy;&nbsp;2020.06&nbsp;网工171班&nbsp;杨子江&nbsp;5504117075</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

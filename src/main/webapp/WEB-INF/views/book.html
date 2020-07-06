@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图书查询-FP图书管理系统</title>
+    <script src="/js/jquery-3.4.1.js"></script>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/own.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/css/book.css" />
+    <script>
+        $(document).ready(function () {
+            var who = "";
+            $.ajax({
+                url:"/view/showWho",
+                type:"POST",
+                dataType: "text",
+                async: false,
+                success:function (data) {
+                    who = data;
+                },
+                error:function () {
+
+                }
+            });
+            $("#book-query").click(function () {
+                $.ajax({
+                    url:"/book/queryWant",
+                    type:"POST",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    data:JSON.stringify($("#query-book-form").serializeJson()),
+                    success:function (data) {
+                        console.log(data);
+                       var html = "<thead><tr>" + "<th>图书编号</th>" + "<th>图书名字</th>" + "<th>图书作者</th>" + "<th>图书出版社</th>" +
+                           "<th>图书类别</th>" + "<th>图书价格</th>" + "<th>图书数量</th>" +"<th>操作</th>"+ "</tr></thead>";
+                       var list = data.list;
+                       html += "<tbody>"
+                       for(var i = 0;i<list.length;i++){
+                           html += "<tr>"+"<td "+((who=="admin")?"class='update-book' onclick='queryInfo(this)' data-toggle='tooltip' data-placement='top' title='点击查看或更新图书详细资料'":"")+">"+list[i].book_No+"</td>"+"<td>"+list[i].book_name+"</td>"+"<td>"+list[i].book_author+"</td>"
+                               +"<td>"+list[i].book_publisher+"</td>"+"<td>"+list[i].book_category+"</td>"+"<td>"+list[i].book_price+"</td>";
+                           if(who=="reader"){
+                               html += "<td>"+list[i].book_number+"</td>"+"<td><div class='btn-borrow' id='btn-borrow"+i+"' onclick='borrow(this)'>借书</div></td>"+"</tr>";
+                           }
+                           else if(who=="admin"){
+                               html += "<td>"+list[i].book_number+"</td>"+"<td><div class='btn-borrow' id='btn-borrow"+i+"' onclick='deleteBook(this)'>删除</div></td>"+"</tr>";
+                           }
+                       }
+                       html += "</tbody>";
+                       $("#query-book-list").html(html);
+                       var nav = "<div class='bar-div' name='first' onclick='jump(this)'><span class='btn-page btn-default'>首页</span></div>";
+                       if(data.isFirstPage==false){
+                           nav += "<div class='bar-div' name='before' id='"+data.pageNum+"' onclick='jump(this)'><span class='btn-page btn-default'>上一页</span></div>";
+                       }
+                       for(var i =0;i<data.navigatepageNums.length;i++){
+                           nav += "<div class='bar-div' name='"+(data.navigatepageNums[i])+"' onclick='jump(this)' id='"+(data.navigatepageNums[i])+"'";
+                           if(data.pageNum==data.navigatepageNums[i]){
+                               nav += "><span class='btn-page btn-active'>"+(data.navigatepageNums[i])+"</span></div>";
+                           }
+                           else{
+                               nav += "><span class='btn-page btn-default'>"+(data.navigatepageNums[i])+"</span></div>";
+                           }
+                       }
+                       if(data.isLastPage==false){
+                           nav += "<div class='bar-div' name='next' id='"+data.pageNum+"' onclick='jump(this)'><span class='btn-page btn-default'>下一页</span></div>";
+                       }
+                       nav += "<div class='bar-div' name='end' id='"+data.lastPage+"' onclick='jump(this)'><span class='btn-page btn-default'>尾页</span></div>";
+                       // if(who=="admin"){
+                       //     nav += "<div class='bar-div' id='add-book'><span class='btn-page btn-info'>上架新书</span></div>"
+                       // }
+                       $("#nav-bar").html(nav);
+                    },
+                    error:function () {
+                        console.log("error");
+                    }
+                });
+            });
+            if(who=="admin"){
+                $("#book-query").parent().next().html("<input type='button' class='button btn-info form-btn' value='上架新书' id='add-book' />");
+            }
+            $("#add-book").click(function () {
+                window.location.href = "/view/add";
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container book-query-content">
+        <div class="row book-query-row-outer">
+            <div class="col-md-12 book-query-container container">
+                <div class="row">
+                    <div class="book-query-header col-xs-4 col-xs-offset-5">
+                        <span>图书目录查询</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <form id="query-book-form">
+                        <div class="form-group container query-book-form">
+                            <div class="row">
+                                <div class="col-xs-6 query-book-form-row">
+                                    <span>图书类别</span>
+                                    <select class="form-control" name="book_category">
+                                        <option selected="selected" disabled="disabled"  style='display: none' value=''></option>
+                                        <option value="哲学、宗教">哲学、宗教</option>
+                                        <option value="社会科学总论">社会科学总论</option>
+                                        <option value="政治、法律">政治、法律</option>
+                                        <option value="军事">军事</option>
+                                        <option value="经济">经济</option>
+                                        <option value="文学">文学</option>
+                                        <option value="艺术">艺术</option>
+                                        <option value="文化、科学">文化、科学</option>
+                                        <option value="教育、体育">教育、体育</option>
+                                    </select>
+                                </div>
+                                <div class="col-xs-6 query-book-form-row">
+                                    <span>图书名字</span>
+                                    <input type="text" class="form-control" name="book_name" placeholder="请输入图书的名字" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 query-book-form-row">
+                                    <span>图书作者</span>
+                                    <input type="text" class="form-control" name="book_author" placeholder="请输入图书的作者" autocomplete="off" />
+                                </div>
+                                <div class="col-xs-6 query-book-form-row">
+                                    <span>图书出版社</span>
+                                    <input type="text" class="form-control" name="book_publisher" placeholder="请输入图书的出版社" autocomplete="off" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 query-book-form-row">
+                                    <span>图书价格</span>
+                                    <input type="text" class="form-control" name="book_price" placeholder="请输入图书价格" autocomplete="off" />
+                                </div>
+                                <div class="col-xs-6 query-book-form-row">
+                                    <span>是否过滤剩余数量为0的图书</span>
+                                    <input type="radio" class="form-radio" name="book_number" value="1" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <input type="button" class="button btn-info form-btn" value="查询" id="book-query" />
+                                </div>
+                                <div class='col-xs-6'></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <table class="table table-hover" id="query-book-list"></table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12" id="nav-bar"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

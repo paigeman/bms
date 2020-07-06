@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图书信息-FP图书管理系统</title>
+    <script src="/js/jquery-3.4.1.js"></script>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/own.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/css/profile.css" />
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "/book/info",
+                type: "post",
+                dataType: "json",
+                async: false,
+                success:function (data) {
+                    var html = "<div class='container'>" +
+                        "<div class='row'>" +
+                        "<div class='col-xs-8 info-container container col-xs-offset-1'>" +
+                        "<div class='row'>" +
+                        "<div class='col-xs-3 profile-img col-xs-offset-3'>" +
+                        "<img src='/images/default-book.png' id='info-img' />" +
+                        "</div>" +
+                        "</div>" +
+                        "<div class='row profile-form'>" +
+                        "<form id='profile-form'>" +
+                        "<div class='form-group'>" +
+                        "<label for='book_No' class='form-text'>图书编号</label>" +
+                        "<input type='text' class='form-control form-input' name='book_No' id='book_No' autocomplete='off' disabled value='"+data.book_No+"' />" +
+                        "<label for='book_name' class='form-text'>图书名字</label>" +
+                        "<input type='text' class='form-control form-input' name='book_name' id='book_name' autocomplete='off' disabled value='"+data.book_name+"' />" +
+                        "<label for='book_author' class='form-text'>图书作者</label>" +
+                        "<input type='text' class='form-control form-input' name='book_author' id='book_author' autocomplete='off' disabled value='"+data.book_author+"'/>" +
+                        "<label for='book_publisher' class='form-text'>图书出版社</label>" +
+                        "<input type='text' class='form-control form-input' name='book_publisher' id='book_publisher' autocomplete='off' disabled value='"+data.book_publisher+"' />" +
+                        "<label for='book_bio' class='form-text'>图书简介</label>" +
+                        "<input type='text' class='form-control form-input' name='book_bio' id='book_bio' autocomplete='off' disabled value='"+data.book_bio+"' />" +
+                        "<label for='book_category' class='form-text'>图书类别</label>" +
+                        "<input type='text' class='form-control form-input' name='book_category' id='book_category' autocomplete='off' disabled value='"+data.book_category+"' />"+
+                        "<label for='book_price' class='form-text'>图书价格</label>" +
+                        "<input type='text' class='form-control form-input' name='book_price' id='book_price' autocomplete='off' disabled value='"+data.book_price+"元' />"+
+                        "<label for='book_number' class='form-text'>图书剩余数量</label>" +
+                        "<input type='text' class='form-control form-input' name='book_number' id='book_number' autocomplete='off' disabled value='"+data.book_number+"' />"+
+                        "<label for='book_ban' class='form-text'>图书是否下架</label>" +
+                        "<input type='text' class='form-control form-input' name='book_ban' id='book_ban' autocomplete='off' disabled value='"+((data.book_ban==1)?"是":"否")+"' />"+
+                        "<label for='book_limit' class='form-text'>借阅时间限制</label>" +
+                        "<input type='text' class='form-control form-input' name='book_limit' id='book_limit' autocomplete='off' disabled value='"+data.book_limit+"天' />"+
+                        "<label for='book_per_day' class='form-text'>逾期罚款(元/天)</label>" +
+                        "<input type='text' class='form-control form-input' name='book_per_day' id='book_per_day' autocomplete='off' disabled value='"+data.book_per_day+"元' />"+
+                        "</div>" +
+                        "<input type='button' class='button btn-warning info-form-btn' value='修改资料' id='book_info_modify' />" +
+                        "<input type='button' class='button btn-success info-form-btn' value='提交' id='book_info_submit' />" +
+                        "<input type='button' class='button btn-info info-form-btn' value='返回' id='book_info_return' />"+
+                        "</form>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>"
+                    $("body").html(html);
+                    $("#book_info_modify").click(function () {
+                        var array = $("#profile-form").children().find("input");
+                        // console.log(array);
+                        for(var i = 1;i<array.length;i++){
+                            array[i].removeAttribute("disabled");
+                        }
+                    });
+                    $("#book_info_submit").click(function () {
+                        $.ajax({
+                            url: "/book/updateInfo",
+                            type: "post",
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "text",
+                            data:JSON.stringify($("#profile-form").serializeJson()),
+                            async: false,
+                            success:function (data) {
+                                if(data=="true"){
+                                    var book_No = $("#book_No").val();
+                                    window.location.href = "/view/info?book_No=" + book_No;
+                                    // console.log($("#book_No").val())
+                                    // window.location.href = "/view/info"
+                                }
+                            },
+                            error:function () {
+                                console.log("update book info error");
+                            }
+                        });
+                    });
+                    $("#book_info_return").click(function () {
+                        window.location.href = "/view/book";
+                    });
+                },
+                error:function () {
+                    console.log("show book info error");
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的账号-FP图书管理系统</title>
+    <script src="/js/jquery-3.4.1.js"></script>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/own.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/css/profile.css" />
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "/reader/profile",
+                type: "post",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    var html = "<div class='container'>" +
+                        "<div class='row'>" +
+                        "<div class='col-xs-6 welcome-container clear-float container col-xs-offset-2'>" +
+                        "<div class='row'>" +
+                        "<div class='welcome-content float-left'><img src='/images/decore-left.png' class='welcome-img' /></div>"+
+                        "<div class='welcome-content float-right'><img src='/images/decore-right.png' class='welcome-img' /></div>"+
+                        "</div>"+
+                        "<div class='row'>" +
+                        "<div class='welcome-text1 col-xs-4 col-xs-offset-4'><span>Hi,"+data.reader_name+"</span></div>"+
+                        "</div>" +
+                        "<div class='row'>" +
+                        "<div class='welcome-text2 col-xs-10 col-xs-offset-1'><span>欢迎使用FP图书管理系统，期待给你带来更好的阅读体验</span></div>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>" +
+                        "<div class='row'>" +
+                        "<div class='col-xs-8 profile-container container col-xs-offset-1'>" +
+                        "<div class='row'>" +
+                        "<div class='col-xs-3 profile-img col-xs-offset-4'>" +
+                        "<img src='/images/default.png' id='profile-img' />" +
+                        "</div>" +
+                        "</div>" +
+                        "<div class='row profile-form'>" +
+                        "<form id='profile-form'>" +
+                        "<div class='form-group'>" +
+                        "<label for='reader_contact' class='form-text'>联系方式</label>" +
+                        "<input type='text' class='form-control form-input' name='reader_contact' id='reader_contact' autocomplete='off' disabled value='"+data.reader_contact+"' />" +
+                        "<label for='reader_sex' class='form-text'>性别</label>" +
+                        "<input type='text' class='form-control form-input' name='reader_sex' id='reader_sex' autocomplete='off' disabled value='"+data.reader_sex+"' />" +
+                        "<label for='reader_fine' class='form-text'>当前所欠罚款</label>" +
+                        "<input type='text' class='form-control form-input' name='reader_fine' id='reader_fine' autocomplete='off' disabled value='"+data.reader_fine+"元'/>" +
+                        "<label for='reader_pwd' class='form-text'>登录密码</label>" +
+                        "<input type='text' class='form-control form-input' name='reader_pwd' id='reader_pwd' autocomplete='off' disabled value='"+data.reader_pwd+"' />" +
+                        "<label for='reader_ban' class='form-text'>账户是否被封禁</label>" +
+                        "<input type='text' class='form-control form-input' name='reader_ban' id='reader_ban' autocomplete='off' disabled value='"+((data.reader_ban==1)?"是":"否")+"' />" +
+                        "</div>" +
+                        "<input type='button' class='button btn-warning form-btn' value='修改资料' id='reader_profile_modify' />" +
+                        "<input type='button' class='button btn-success form-btn' value='提交' id='reader_profile_submit' />" +
+                        "</form>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>"
+                    $("body").html(html);
+                },
+                error:function (data) {
+                    // console.log("error");
+                    $.ajax({
+                        url: "/admin/profile",
+                        type: "post",
+                        dataType: "json",
+                        async: false,
+                        success:function (data) {
+                            var html = "<div class='container'>" +
+                                "<div class='row'>" +
+                                "<div class='col-xs-6 welcome-container clear-float container col-xs-offset-2'>" +
+                                "<div class='row'>" +
+                                "<div class='welcome-content float-left'><img src='/images/decore-left.png' class='welcome-img' /></div>"+
+                                "<div class='welcome-content float-right'><img src='/images/decore-right.png' class='welcome-img' /></div>"+
+                                "</div>"+
+                                "<div class='row'>" +
+                                "<div class='welcome-text1 col-xs-4 col-xs-offset-4'><span>Hi,"+data.admin_name+"</span></div>"+
+                                "</div>" +
+                                "<div class='row'>" +
+                                "<div class='welcome-text2 col-xs-10 col-xs-offset-1'><span>欢迎使用FP图书管理系统，期待给你带来更好的阅读体验</span></div>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>" +
+                                "<div class='row'>" +
+                                "<div class='col-xs-8 profile-container container col-xs-offset-1'>" +
+                                "<div class='row'>" +
+                                "<div class='col-xs-3 profile-img col-xs-offset-4'>" +
+                                "<img src='/images/default.png' id='profile-img' />" +
+                                "</div>" +
+                                "</div>" +
+                                "<div class='row profile-form'>" +
+                                "<form id='profile-form'>" +
+                                "<div class='form-group'>" +
+                                "<label for='admin_contact' class='form-text'>联系方式</label>" +
+                                "<input type='text' class='form-control form-input' name='admin_contact' id='admin_contact' autocomplete='off' disabled value='"+data.admin_contact+"' />" +
+                                "<label for='admin_sex' class='form-text'>性别</label>" +
+                                "<input type='text' class='form-control form-input' name='admin_sex' id='admin_sex' autocomplete='off' disabled value='"+data.admin_sex+"' />" +
+                                "<label for='admin_pwd' class='form-text'>登录密码</label>" +
+                                "<input type='text' class='form-control form-input' name='admin_pwd' id='admin_pwd' autocomplete='off' disabled value='"+data.admin_pwd+"' />" +
+                                "<label for='admin_ban' class='form-text'>账户是否被封禁</label>" +
+                                "<input type='text' class='form-control form-input' name='admin_ban' id='admin_ban' autocomplete='off' disabled value='"+((data.admin_ban==1)?"是":"否")+"' />" +
+                                "<label for='admin_root' class='form-text'>账户是否为超级用户</label>" +
+                                "<input type='text' class='form-control form-input' name='admin_root' id='admin_root' autocomplete='off' disabled value='"+((data.admin_root==1)?"是":"否")+"' />" +
+                                "</div>" +
+                                "<input type='button' class='button btn-warning form-btn' value='修改资料' id='admin_profile_modify' />" +
+                                "<input type='button' class='button btn-success form-btn' value='提交' id='admin_profile_submit' />" +
+                                "</form>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>"
+                            $("body").html(html);
+                            $("#admin_profile_modify").click(function () {
+                                $("#admin_contact").removeAttr("disabled");
+                                $("#admin_pwd").removeAttr("disabled");
+                            });
+                            $("#admin_profile_submit").click(function () {
+                                // console.log($("#reader_contact").val())
+                                $.ajax({
+                                    url: "/admin/updateProfile",
+                                    type: "post",
+                                    contentType: "application/json;charset=utf-8",
+                                    dataType: "text",
+                                    data: JSON.stringify({"admin_contact":$("#admin_contact").val(),"admin_pwd":$("#admin_pwd").val()}),
+                                    async: false,
+                                    success:function (data) {
+                                        //console.log(data);
+                                        if(data=="pwd success"){
+                                            if(top.location!=self.location){
+                                                console.log("enter");
+                                                top.location.href = "/view/index";
+                                            }
+                                        }
+                                        else if(data=="contact success"){
+                                            window.location.href = "/view/profile";
+                                        }
+                                    },
+                                    error:function (data) {
+                                        console.log("error");
+                                    }
+                                });
+                            });
+                        },
+                        error:function () {
+
+                        }
+                    });
+                }
+            });
+            $("#reader_profile_modify").click(function () {
+                $("#reader_contact").removeAttr("disabled");
+                $("#reader_pwd").removeAttr("disabled");
+            });
+            $("#reader_profile_submit").click(function () {
+                // console.log($("#reader_contact").val())
+                $.ajax({
+                    url: "/reader/updateProfile",
+                    type: "post",
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "text",
+                    data: JSON.stringify({"reader_contact":$("#reader_contact").val(),"reader_pwd":$("#reader_pwd").val()}),
+                    async: false,
+                    success:function (data) {
+                        //console.log(data);
+                        if(data=="pwd success"){
+                            if(top.location!=self.location){
+                                console.log("enter");
+                                top.location.href = "/view/index";
+                            }
+                        }
+                        else if(data=="contact success"){
+                            window.location.href = "/view/profile";
+                        }
+                    },
+                    error:function (data) {
+                        console.log("error");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

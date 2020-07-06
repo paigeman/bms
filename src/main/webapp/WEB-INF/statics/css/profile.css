@@ -1,0 +1,85 @@
+body{
+    background: transparent;
+}
+
+.welcome-container{
+    margin-top: 10px;
+    background: #ea5455 !important;
+    font-size: 20px;
+    color: #fff;
+    height: 130px;
+    border-radius: 5px;
+}
+
+.welcome-img{
+    width: 100px;
+    height: 50px;
+}
+
+.welcome-content{
+    display: inline-block;
+}
+
+.float-left{
+    float: left;
+}
+
+.float-right{
+    float: right;
+}
+
+.clear-float{
+    clear: both;
+}
+
+.welcome-text2{
+    font-size: 15px !important;
+}
+
+.profile-container{
+    background-color: #fff !important;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.1);
+    box-sizing: border-box;
+    height: 490px;
+    position: relative;
+    z-index: 1000;
+    clear: both;
+    overflow-y:scroll;
+    margin-top: 20px;
+    padding-left: 80px;
+}
+
+#profile-img{
+    width: 100px;
+    height: 100px;
+}
+
+.info-container{
+    background-color: #fff !important;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.1);
+    box-sizing: border-box;
+    height: 490px;
+    position: relative;
+    z-index: 1000;
+    clear: both;
+    overflow-y:scroll;
+    margin-top: 60px;
+    padding-left: 80px;
+}
+
+#info-img{
+    width: 100px;
+    height: 100px;
+    padding-top: 20px;
+}
+
+.info-form-btn{
+    margin-top: 20px;
+    width: 80px;
+    height: 40px;
+    margin-right: 50px;
+}
+
+#book_category{
+    width: 300px;
+}
