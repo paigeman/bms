@@ -30,4 +30,7 @@ public interface BookMapper {
     int updateByPrimaryKeySelective(Book record);
 
     int updateByPrimaryKey(Book record);
+
+    List<Book> selectByBookSelective(Book book);
+
 }

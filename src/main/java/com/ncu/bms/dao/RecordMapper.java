@@ -30,4 +30,7 @@ public interface RecordMapper {
     int updateByPrimaryKeySelective(Record record);
 
     int updateByPrimaryKey(Record record);
+
+    List<Record> selectByRecordSelective(Record record);
+
 }
