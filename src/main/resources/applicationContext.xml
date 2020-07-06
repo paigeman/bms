@@ -85,4 +85,7 @@
         </property>
     </bean>
 
+    <!--实例化sid-->
+    <bean id="sid" class="org.n3r.idworker.Sid"></bean>
+
 </beans>

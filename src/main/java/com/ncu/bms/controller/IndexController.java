@@ -83,4 +83,9 @@ public class IndexController {
         return "readerRecord";
     }
 
+    @RequestMapping(value = "/fine")
+    public String showFine(){
+        return "fine";
+    }
+
 }
