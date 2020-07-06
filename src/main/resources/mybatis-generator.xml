@@ -54,6 +54,12 @@
         <table tableName="record" domainObjectName="Record">
             <property name="useActualColumnNames" value="true"/>
         </table>
+        <table tableName="flow" domainObjectName="Flow">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
+        <table tableName="order" domainObjectName="Order">
+            <property name="useActualColumnNames" value="true"/>
+        </table>
     </context>
 
 </generatorConfiguration>
