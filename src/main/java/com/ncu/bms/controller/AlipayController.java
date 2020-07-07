@@ -145,16 +145,16 @@ public class AlipayController {
                     //付款金额，必填
                     String total_amount = order.getOrder_amount();
                     //订单名称，必填
-                    String subject = "罚款缴纳";
+//                    String subject = "罚款缴纳";
 //                    subject = new String(subject.getBytes("utf-8"), "utf-8");
 //                    System.out.println(subject);
-//                    String subject = "fine";
+                    String subject = "fine";
                     //商品描述，可空
-                    String body = "FP图书管理系统罚款缴纳："+reader_id+"\t"+order.getOrder_amount();
+//                    String body = "FP图书管理系统罚款缴纳："+reader_id+"\t"+order.getOrder_amount();
 //                    body = new String(body.getBytes("utf-8"), "utf-8");
 //                    System.out.println(body);
 //                    System.out.println(Charset.defaultCharset());
-//                    String body = reader_id+"\t"+order.getOrder_amount();
+                    String body = reader_id+"\t"+order.getOrder_amount();
                     // 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
                     String timeout_express = "15m";
                     alipayTradePagePayRequest.setBizContent("{\"out_trade_no\":\""+ out_trade_no +"\","
@@ -191,7 +191,7 @@ public class AlipayController {
             valueStr = new String(valueStr.getBytes("ISO-8859-1"), "utf-8");
             params.put(name, valueStr);
         }
-        boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
+        boolean signVerified = AlipaySignature.rsaCheckV2(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
         if(signVerified){
             String out_trade_no = new String(request.getParameter("out_trade_no").getBytes("ISO-8859-1"),"UTF-8");
             //支付宝交易号
