@@ -57,7 +57,7 @@
         <table tableName="flow" domainObjectName="Flow">
             <property name="useActualColumnNames" value="true"/>
         </table>
-        <table tableName="order" domainObjectName="Order">
+        <table tableName="orders" domainObjectName="Orders">
             <property name="useActualColumnNames" value="true"/>
         </table>
     </context>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ncu.bms.dao.OrderMapper">
-  <resultMap id="BaseResultMap" type="com.ncu.bms.bean.Order">
+<mapper namespace="com.ncu.bms.dao.OrdersMapper">
+  <resultMap id="BaseResultMap" type="com.ncu.bms.bean.Orders">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="order_num" jdbcType="VARCHAR" property="order_num" />
     <result column="order_status" jdbcType="VARCHAR" property="order_status" />
@@ -71,13 +71,13 @@
   <sql id="Base_Column_List">
     id, order_num, order_status, order_amount, paid_amount, create_time, paid_time
   </sql>
-  <select id="selectByExample" parameterType="com.ncu.bms.bean.OrderExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.ncu.bms.bean.OrdersExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from order
+    from orders
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -88,29 +88,29 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from order
+    from orders
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from order
+    delete from orders
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.ncu.bms.bean.OrderExample">
-    delete from order
+  <delete id="deleteByExample" parameterType="com.ncu.bms.bean.OrdersExample">
+    delete from orders
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.ncu.bms.bean.Order">
-    insert into order (id, order_num, order_status, 
+  <insert id="insert" parameterType="com.ncu.bms.bean.Orders">
+    insert into orders (id, order_num, order_status, 
       order_amount, paid_amount, create_time, 
       paid_time)
     values (#{id,jdbcType=VARCHAR}, #{order_num,jdbcType=VARCHAR}, #{order_status,jdbcType=VARCHAR}, 
       #{order_amount,jdbcType=VARCHAR}, #{paid_amount,jdbcType=VARCHAR}, #{create_time,jdbcType=TIMESTAMP}, 
       #{paid_time,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.ncu.bms.bean.Order">
-    insert into order
+  <insert id="insertSelective" parameterType="com.ncu.bms.bean.Orders">
+    insert into orders
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -158,14 +158,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.ncu.bms.bean.OrderExample" resultType="java.lang.Long">
-    select count(*) from order
+  <select id="countByExample" parameterType="com.ncu.bms.bean.OrdersExample" resultType="java.lang.Long">
+    select count(*) from orders
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update order
+    update orders
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=VARCHAR},
@@ -194,7 +194,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update order
+    update orders
     set id = #{record.id,jdbcType=VARCHAR},
       order_num = #{record.order_num,jdbcType=VARCHAR},
       order_status = #{record.order_status,jdbcType=VARCHAR},
@@ -206,8 +206,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ncu.bms.bean.Order">
-    update order
+  <update id="updateByPrimaryKeySelective" parameterType="com.ncu.bms.bean.Orders">
+    update orders
     <set>
       <if test="order_num != null">
         order_num = #{order_num,jdbcType=VARCHAR},
@@ -230,8 +230,8 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.ncu.bms.bean.Order">
-    update order
+  <update id="updateByPrimaryKey" parameterType="com.ncu.bms.bean.Orders">
+    update orders
     set order_num = #{order_num,jdbcType=VARCHAR},
       order_status = #{order_status,jdbcType=VARCHAR},
       order_amount = #{order_amount,jdbcType=VARCHAR},
@@ -240,13 +240,13 @@
       paid_time = #{paid_time,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.ncu.bms.bean.OrderExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds" parameterType="com.ncu.bms.bean.OrdersExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from order
+    from orders
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

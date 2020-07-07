@@ -5,7 +5,7 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
-import com.ncu.bms.bean.Order;
+import com.ncu.bms.bean.Orders;
 import com.ncu.bms.bean.Reader;
 import com.ncu.bms.service.IOrderService;
 import com.ncu.bms.service.IReaderService;
@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -58,8 +59,13 @@ public class AlipayController {
                     return "false";
                 }
                 else{
-                    String reader_fine = reader.getReader_fine().toString();
-                    return reader_fine;
+                    if(reader.getReader_fine()==null){
+                        return null;
+                    }
+                    else{
+                        String reader_fine = reader.getReader_fine().toString();
+                        return reader_fine;
+                    }
                 }
             }
         }
@@ -67,28 +73,42 @@ public class AlipayController {
 
     @RequestMapping(value = "/createOrder")
     @ResponseBody
-    public Order createOrder(HttpSession session,@RequestParam String reader_fine){
+    public Orders createOrder(HttpSession session,@RequestParam String reader_fine){
+//        System.out.println("enter1");
         String who = (String)session.getAttribute("who");
         if(who==null||who.equals("")||who.equals("admin")){
+//            System.out.println("enter2");
             return null;
         }
         else{
+//            System.out.println("enter3");
             String reader_id = (String) session.getAttribute("id");
             if(reader_id==null||reader_id.equals("")){
+//                System.out.println("enter4");
                 return null;
             }
             else{
-                Order order = new Order();
-                String orderId = sid.nextShort();
+//                System.out.println("enter5");
+                Orders order = new Orders();
+//                System.out.println("enter1");
+                String orderId = Sid.nextShort();
+//                System.out.println("enter1");
+//                System.out.println("orderId:"+orderId.trim());
                 order.setId(orderId);
                 order.setOrder_num(orderId);
                 order.setCreate_time(new Date());
+//                System.out.println("enter1");
+//                System.out.println(reader_fine);
                 order.setOrder_amount(reader_fine);
+//                System.out.println("enter1");
                 order.setOrder_status(OrderStatusEnum.WAIT_PAY.key);
+//                System.out.println("enter1");
                 if(iOrderService.isSaveOrder(order)){
+//                    System.out.println("enter6");
                     return order;
                 }
                 else{
+//                    System.out.println("enter7");
                     return null;
                 }
             }
@@ -100,7 +120,7 @@ public class AlipayController {
      * */
     @RequestMapping(value = "/goAlipay")
     @ResponseBody
-    public String goAlipay(HttpSession session,@RequestParam String orderId, HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
+    public String goAlipay(HttpSession session,@RequestParam String orderId, HttpServletRequest request, HttpServletResponse response) throws AlipayApiException, UnsupportedEncodingException {
         String who = (String)session.getAttribute("who");
         if(who==null||who.equals("")||who.equals("admin")){
             return "false";
@@ -111,7 +131,7 @@ public class AlipayController {
                 return "false";
             }
             else{
-                Order order = iOrderService.getOrderById(orderId);
+                Orders order = iOrderService.getOrderById(orderId);
                 if(order==null){
                     return "false";
                 }
@@ -126,8 +146,15 @@ public class AlipayController {
                     String total_amount = order.getOrder_amount();
                     //订单名称，必填
                     String subject = "罚款缴纳";
+//                    subject = new String(subject.getBytes("utf-8"), "utf-8");
+//                    System.out.println(subject);
+//                    String subject = "fine";
                     //商品描述，可空
                     String body = "FP图书管理系统罚款缴纳："+reader_id+"\t"+order.getOrder_amount();
+//                    body = new String(body.getBytes("utf-8"), "utf-8");
+//                    System.out.println(body);
+//                    System.out.println(Charset.defaultCharset());
+//                    String body = reader_id+"\t"+order.getOrder_amount();
                     // 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
                     String timeout_express = "15m";
                     alipayTradePagePayRequest.setBizContent("{\"out_trade_no\":\""+ out_trade_no +"\","

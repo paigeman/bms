@@ -1,0 +1,29 @@
+body{
+    background: transparent;
+}
+
+.fine-container{
+    /*background: #ea5455 !important;*/
+    background: -moz-linear-gradient(top, #ea5455, #fff) !important;
+    height: 200px;
+    margin-top: 20px;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.fine-row{
+    font-size: 40px;
+    margin-top: 10px;
+}
+
+.button-row{
+    margin-top: 30px;
+}
+
+#go_pay{
+    /*background: #ea5455 !important;*/
+    /*background: inherit;*/
+    /*background: linear-gradient(top, #ea5455, #fff);*/
+    border-color: #fff;
+    width: 120px;
+}

@@ -1,13 +1,13 @@
 package com.ncu.bms.service;
 
-import com.ncu.bms.bean.Order;
+import com.ncu.bms.bean.Orders;
 
 public interface IOrderService {
 
     /**
      * @param order 订单
      * */
-    public boolean isSaveOrder(Order order);
+    public boolean isSaveOrder(Orders order);
 
     /**
      * @param orderId 订单id
@@ -19,6 +19,6 @@ public interface IOrderService {
     /**
      * @param orderId 订单id
      * */
-    public Order getOrderById(String orderId);
+    public Orders getOrderById(String orderId);
 
 }

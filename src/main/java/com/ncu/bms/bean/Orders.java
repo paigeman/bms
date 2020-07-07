@@ -2,7 +2,7 @@ package com.ncu.bms.bean;
 
 import java.util.Date;
 
-public class Order {
+public class Orders {
     private String id;
 
     private String order_num;

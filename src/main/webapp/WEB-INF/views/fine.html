@@ -10,9 +10,74 @@
     <script src="/js/own.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
-
+    <link rel="stylesheet" type="text/css" href="/css/fine.css" />
+    <script>
+        $(document).ready(function () {
+            var reader_fine;
+            $.ajax({
+                url: "/alipay/getFine",
+                type: "post",
+                dataType: "text",
+                async: false,
+                success: function (data){
+                    // console.log(data);
+                    if(data!=null){
+                        reader_fine = data;
+                    }
+                    var fineContent = "<div class='container'><div class='row'><div class='col-md-12 fine-container container'>" +
+                        "<div class='row'><div class='col-md-3 fine-row'><span>￥"+((data=="")?"0.00":data)+"</span></div></div>" +
+                        "<div class='row'><div class='col-md-3'><span>当前未缴纳罚款金额</span></div></div>" +
+                        "<div class='row'><div class='col-md-5 button-row'><div type='button' class='btn' id='go_pay' "+((data==""||data=="0.00")?"disabled":"")+">去交款</div></div></div></div></div></div>";
+                    $("#fine").html(fineContent);
+                    $("#gp_pay").css("cssText","background-color:inherit");
+                    $("#go_pay").mouseover(function () {
+                        $("#go_pay").css("cssText","background-color:#fff !important");
+                    });
+                    $("#go_pay").mouseleave(function () {
+                        $("#go_pay").css("cssText","background-color:inherit");
+                    })
+                }
+            });
+            // $.ajax({
+            //     url: "/record/querySpecificReader",
+            //     type: "post",
+            //     dataType: "json",
+            //     async: false,
+            //     success:function (data) {
+            //         var recordContent = "";
+            //         var list = data.list;
+            //         for(var i = 0;list.length;i++){
+            //
+            //         }
+            //     },
+            //     error:function () {
+            //         console.log("error");
+            //     }
+            // });
+            $("#go_pay").click(function () {
+                // console.log(reader_fine);
+                $.ajax({
+                    url: "/alipay/createOrder?reader_fine="+reader_fine,
+                    type: "post",
+                    dataType: "json",
+                    async: false,
+                    success:function (data) {
+                        // console.log(data);
+                        if(data!=null){
+                            // console.log(data.id);
+                            top.location.href = "/alipay/goAlipay?orderId="+data.id;
+                        }
+                    },
+                    error:function () {
+                        console.log("error");
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 <body>
-
+    <div id="fine"></div>
+<!--    <div id="record"></div>-->
 </body>
 </html>

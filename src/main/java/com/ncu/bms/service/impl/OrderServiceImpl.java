@@ -2,9 +2,9 @@ package com.ncu.bms.service.impl;
 
 
 import com.ncu.bms.bean.Flow;
-import com.ncu.bms.bean.Order;
+import com.ncu.bms.bean.Orders;
 import com.ncu.bms.dao.FlowMapper;
-import com.ncu.bms.dao.OrderMapper;
+import com.ncu.bms.dao.OrdersMapper;
 import com.ncu.bms.service.IOrderService;
 import com.ncu.bms.util.OrderStatusEnum;
 import org.n3r.idworker.Sid;
@@ -17,7 +17,7 @@ import java.util.Date;
 public class OrderServiceImpl implements IOrderService {
 
     @Autowired
-    private OrderMapper orderMapper;
+    private OrdersMapper ordersMapper;
 
     @Autowired
     private FlowMapper flowMapper;
@@ -26,24 +26,38 @@ public class OrderServiceImpl implements IOrderService {
     private Sid sid;
 
     @Override
-    public boolean isSaveOrder(Order order) {
+    public boolean isSaveOrder(Orders order) {
+//        System.out.println("enter");
         String orderId = order.getId();
-        if(orderMapper.selectByPrimaryKey(orderId)!=null){
-            return false;
+//        System.out.println("enter1");
+        try{
+//            System.out.println(orderId);
+//            System.out.println(ordersMapper.selectByPrimaryKey(orderId));
+            if(ordersMapper.selectByPrimaryKey(orderId)!=null){
+//                System.out.println("enter2");
+                return false;
+            }
+            else{
+//                System.out.println("enter3");
+                if(ordersMapper.insert(order)!=0){
+//                    System.out.println("enter4");
+                    return true;
+                }
+                else{
+//                    System.out.println("enter5");
+                    return false;
+                }
+            }
         }
-        else{
-           if(orderMapper.insert(order)!=0){
-               return true;
-           }
-           else{
-               return false;
-           }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
         }
     }
 
     @Override
     public boolean isUpdateOrderStatus(String orderId, String alipayFlowNum, String paidAmount) {
-        Order order = orderMapper.selectByPrimaryKey(orderId);
+        Orders order = ordersMapper.selectByPrimaryKey(orderId);
         if(order==null){
             return false;
         }
@@ -52,7 +66,7 @@ public class OrderServiceImpl implements IOrderService {
                 order.setOrder_status(OrderStatusEnum.PAID.key);
                 order.setPaid_time(new Date());
                 order.setPaid_amount(paidAmount);
-                if(orderMapper.updateByPrimaryKeySelective(order)==0){
+                if(ordersMapper.updateByPrimaryKeySelective(order)==0){
                     return false;
                 }
                 else{
@@ -79,8 +93,8 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Order getOrderById(String orderId) {
-        return orderMapper.selectByPrimaryKey(orderId);
+    public Orders getOrderById(String orderId) {
+        return ordersMapper.selectByPrimaryKey(orderId);
     }
 
 }
