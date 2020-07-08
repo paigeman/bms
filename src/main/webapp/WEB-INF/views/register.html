@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>注册账号</title>
+    <title>注册账号-FP图书管理系统</title>
     <script src="/js/jquery-3.4.1.js"></script>
     <script src="/js/jquery-3.4.1.min.js"></script>
     <script src="/js/bootstrap.js"></script>
@@ -13,7 +13,59 @@
     <link rel="stylesheet" type="text/css" href="/css/login.css" />
     <script>
         $(document).ready(function () {
+            function shrink(time){
+                setTimeout(function(){
+                    // console.log("进来了");
+                    $("#sex-row").addClass("shrink");
+                },time);
+                setTimeout(function(){
+                    $("#sex-row").removeClass("shrink");
+                },time+100);
+            }
+            var alertDiv = "<div class='alert alert-warning alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 450px'>警告！此项不能为空！</strong></div>";
+            var sexDiv = "<div class='alert alert-warning alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 450px'>警告！性别必须选择！</strong></div>";
+            var successDiv = "<div class='alert alert-success alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 450px'>注册成功！即将跳转至登录页面！</strong></div>";
+            var pwdDiv = "<div class='alert alert-danger alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 450px'>警告！用户ID已存在！请重新注册！</strong></div>";
             $("#reader_register").click(function () {
+                var form = $("#register-form input");
+                var isChecked = "false";
+                for(var i = 0;i<form.length;i++){
+                    if(form[i].value==""&&i!=2&&i!=3){
+                        $("#notice-container").html(alertDiv);
+                        window.setTimeout(function () {
+                            $("#notice-container").children().alert("close");
+                        },3000);
+                        form[i].focus();
+                        return false;
+                    }
+                    else if(i==2||i==3){
+                        if(form[i].checked){
+                            isChecked = "true";
+                        }
+                        if(i==3&&isChecked=="false"){
+                            $("#notice-container").html(sexDiv);
+                            window.setTimeout(function () {
+                                $("#notice-container").children().alert("close");
+                            },3000);
+                            for(var i = 100;i<1300;i=i+200){
+                                shrink(i);
+                            }
+                            return false;
+                        }
+                    }
+                }
                 $.ajax({
                     url: "/reader/register",
                     type: "POST",
@@ -24,10 +76,18 @@
                     data: JSON.stringify($("#register-form").serializeJson()),
                     success:function(data){
                         if(data=="true"){
-                            window.location.href = "/view/index";
+                            $("#notice-container").html(successDiv);
+                            window.setTimeout(function () {
+                                $("#notice-container").children().alert("close");
+                                window.location.href = "/view/index";
+                            },3000);
                         }
                         else{
-
+                            $("#notice-container").html(pwdDiv);
+                            window.setTimeout(function () {
+                                $("#notice-container").children().alert("close");
+                                window.location.href = "/view/register";
+                            },2000);
                         }
                     }
                 });
@@ -36,6 +96,7 @@
     </script>
 </head>
 <body class="login-body" id="login-success">
+    <div id="notice-container"></div>
     <div class="nav">
         <div class="container">
             <div class="row">
@@ -63,8 +124,10 @@
                                 <input type="text" class="form-control form-input" name="reader_name" id="reader_name" placeholder="姓名" autocomplete="off" />
                                 <label class="form-text">性别</label>
                                 <br />
-                                <input type="radio" name="reader_sex" value="男" /><span class="form-radio">男</span>
-                                <input type="radio" name="reader_sex" value="女" /><span class="form-radio">女</span>
+                                <div id="sex-row" style="margin-bottom: -15px;width: 300px">
+                                    <input type="radio" name="reader_sex" value="男" autocomplete="off" /><span class="form-radio">男</span>
+                                    <input type="radio" name="reader_sex" value="女" autocomplete="off" /><span class="form-radio">女</span>
+                                </div>
                                 <br />
                                 <label for="reader_contact" class="form-text">联系方式</label>
                                 <input type="text" class="form-control form-input" name="reader_contact" id="reader_contact" placeholder="联系方式" autocomplete="off" />

@@ -64,7 +64,7 @@ public class ReaderController {
     @RequestMapping(value = "/register")
     @ResponseBody
     public String readerRegister(@RequestBody JSONObject data){
-        System.out.println("enter");
+//        System.out.println("enter");
         String reader_id = (String) data.get("reader_id");
         String reader_name = (String)data.get("reader_name");
         String reader_sex = (String)data.get("reader_sex");

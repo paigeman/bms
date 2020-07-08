@@ -36,10 +36,10 @@ public class IndexController {
         return "book";
     }
 
-    @RequestMapping(value = "/borrow")
-    public String showBorrow(){
-        return "borrow";
-    }
+//    @RequestMapping(value = "/borrow")
+//    public String showBorrow(){
+//        return "borrow";
+//    }
 
     @RequestMapping(value = "/record")
     public String showRecord(){

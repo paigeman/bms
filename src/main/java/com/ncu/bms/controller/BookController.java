@@ -216,7 +216,7 @@ public class BookController {
                 String book_number = (String)data.get("book_number");
                 String book_limit = (String)data.get("book_limit");
                 String book_per_day = (String)data.get("book_per_day");
-                System.out.println("enter");
+//                System.out.println("enter");
                 book.setBook_No(book_No);
                 book.setBook_name(book_name);
                 book.setBook_author(book_author);
@@ -228,7 +228,6 @@ public class BookController {
                 book.setBook_limit(new Integer(book_limit));
                 book.setBook_per_day(new Float(book_per_day));
                 book.setBook_image("/images/default-book.png");
-//                System.out.println("enter");
                 if(iBookService.isAddBook(book)){
                     return "true";
                 }

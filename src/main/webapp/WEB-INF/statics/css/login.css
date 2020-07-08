@@ -121,3 +121,7 @@
     line-height: 80px;
     padding-left: 80px;
 }
+
+.shrink{
+    border: #ccc solid 1px !important;
+}

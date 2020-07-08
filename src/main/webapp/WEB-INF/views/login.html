@@ -19,6 +19,18 @@
     <link rel="stylesheet" type="text/css" href="/css/login.css" />
     <script>
         $(document).ready(function () {
+            var alertDiv = "<div class='alert alert-warning alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 450px'>警告！此项不能为空！</strong></div>";
+            var pwdDiv = "<div class='alert alert-danger alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 450px'>警告！ID不存在或密码错误！</strong></div>";
+            var successDiv = "<div class='alert alert-success alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 450px'>登录成功！即将跳转至用户中心！</strong></div>";
             $("#form-admin").css("display","none");
             $("#identity-reader").click(function () {
                 $("#identity-reader").css("border-bottom","3px solid #ff6a00");
@@ -34,14 +46,10 @@
            });
            $("#reader_login").click(function () {
                var form = $("#form-1 input");
-               var alertDiv = "<div class='alert alert-warning alert-dismissable fade in' role='alert'>" +
-                   "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
-                   "<span aria-hidden='true'>&times;</span></button>" +
-                   "<strong style='font-size: 20px;padding-left: 450px'>警告！此项不能为空！</strong></div>"
                for(var i = 0;i<2;i++){
                    if(form[i].value==""){
                        $("#alert-container").html(alertDiv);
-                       window.setInterval(function () {
+                       window.setTimeout(function () {
                            $("#alert-container").children().alert("close");
                        },3000);
                        form[i].focus();
@@ -63,10 +71,21 @@
                    data: JSON.stringify($("#form-1").serializeJson()),
                    success:function(data){
                        if(data=="true"){
-                           window.location.href = "/view/interface";
+                           $("#alert-container").html(successDiv);
+                           window.setTimeout(function () {
+                               $("#alert-container").children().alert("close");
+                               window.location.href = "/view/interface";
+                           },3000);
                        }
                        else{
-                           window.location.href = "/view/index";
+                           $("#alert-container").html(pwdDiv);
+                           window.setTimeout(function () {
+                               $("#alert-container").children().alert("close");
+                           },3000);
+                           for(var i = 0;i<2;i++){
+                               form[i].value = "";
+                           }
+                           // window.location.href = "/view/index";
                        }
                    }
                });
@@ -75,6 +94,17 @@
                window.location.href = "/view/register";
            });
            $("#admin_login").click(function () {
+               var form = $("#form-2 input");
+               for(var i = 0;i<2;i++){
+                   if(form[i].value==""){
+                       $("#alert-container").html(alertDiv);
+                       window.setTimeout(function () {
+                           $("#alert-container").children().alert("close");
+                       },3000);
+                       form[i].focus();
+                       return false;
+                   }
+               }
                $.ajax({
                    url: "/admin/login",
                    type: "POST",
@@ -84,10 +114,20 @@
                    success:function (data) {
                        // console.log(data);
                        if(data=="true"){
-                           window.location.href = "/view/interface";
+                           $("#alert-container").html(successDiv);
+                           window.setTimeout(function () {
+                               $("#alert-container").children().alert("close");
+                               window.location.href = "/view/interface";
+                           },3000);
                        }
                        else{
-
+                           $("#alert-container").html(pwdDiv);
+                           window.setTimeout(function () {
+                               $("#alert-container").children().alert("close");
+                           },3000);
+                           for(var i = 0;i<2;i++){
+                               form[i].value = "";
+                           }
                        }
                    },
                    error:function () {

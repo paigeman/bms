@@ -14,13 +14,25 @@
     <link rel="stylesheet" type="text/css" href="/css/profile.css" />
     <script>
         $(document).ready(function () {
+            var alertDiv = "<div class='alert alert-warning alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 300px'>警告！此项不能为空！</strong></div>";
+            var infoDiv = "<div class='alert alert-info alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 300px'>资料修改成功！</strong></div>";
+            var pwdDiv = "<div class='alert alert-success alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 300px'>密码修改成功！请重新登录！</strong></div>";
             $.ajax({
                 url: "/reader/profile",
                 type: "post",
                 dataType: "json",
                 async: false,
                 success: function (data) {
-                    var html = "<div class='container'>" +
+                    var html = "<div id='notice-container'></div><div class='container'>" +
                         "<div class='row'>" +
                         "<div class='col-xs-6 welcome-container clear-float container col-xs-offset-2'>" +
                         "<div class='row'>" +
@@ -73,7 +85,7 @@
                         dataType: "json",
                         async: false,
                         success:function (data) {
-                            var html = "<div class='container'>" +
+                            var html = "<div id='notice-container'></div><div class='container'>" +
                                 "<div class='row'>" +
                                 "<div class='col-xs-6 welcome-container clear-float container col-xs-offset-2'>" +
                                 "<div class='row'>" +
@@ -123,6 +135,17 @@
                             });
                             $("#admin_profile_submit").click(function () {
                                 // console.log($("#reader_contact").val())
+                                var form = $("#profile-form input");
+                                for(var i = 0;i<form.length;i++){
+                                    if(form[i].value==""){
+                                        $("#notice-container").html(alertDiv);
+                                        window.setTimeout(function () {
+                                            $("#notice-container").children().alert("close");
+                                        },3000);
+                                        form[i].focus();
+                                        return false;
+                                    }
+                                }
                                 $.ajax({
                                     url: "/admin/updateProfile",
                                     type: "post",
@@ -134,12 +157,22 @@
                                         //console.log(data);
                                         if(data=="pwd success"){
                                             if(top.location!=self.location){
-                                                console.log("enter");
-                                                top.location.href = "/view/index";
+                                                // console.log("enter");
+                                                $("#notice-container").html(pwdDiv);
+                                                window.setTimeout(function () {
+                                                    $("#notice-container").children().alert("close");
+                                                    top.location.href = "/view/index";
+                                                },3000);
+                                                // top.location.href = "/view/index";
                                             }
                                         }
                                         else if(data=="contact success"){
-                                            window.location.href = "/view/profile";
+                                            $("#notice-container").html(infoDiv);
+                                            window.setTimeout(function () {
+                                                $("#notice-container").children().alert("close");
+                                                window.location.href = "/view/profile";
+                                            },3000);
+                                            // window.location.href = "/view/profile";
                                         }
                                     },
                                     error:function (data) {
@@ -160,6 +193,17 @@
             });
             $("#reader_profile_submit").click(function () {
                 // console.log($("#reader_contact").val())
+                var form = $("#profile-form input");
+                for(var i = 0;i<form.length;i++){
+                    if(form[i].value==""){
+                        $("#notice-container").html(alertDiv);
+                        window.setTimeout(function () {
+                            $("#notice-container").children().alert("close");
+                        },3000);
+                        form[i].focus();
+                        return false;
+                    }
+                }
                 $.ajax({
                     url: "/reader/updateProfile",
                     type: "post",
@@ -171,12 +215,20 @@
                         //console.log(data);
                         if(data=="pwd success"){
                             if(top.location!=self.location){
-                                console.log("enter");
-                                top.location.href = "/view/index";
+                                // console.log("enter");
+                                $("#notice-container").html(pwdDiv);
+                                window.setTimeout(function () {
+                                    $("#notice-container").children().alert("close");
+                                    top.location.href = "/view/index";
+                                },3000);
                             }
                         }
                         else if(data=="contact success"){
-                            window.location.href = "/view/profile";
+                            $("#notice-container").html(infoDiv);
+                            window.setTimeout(function () {
+                                $("#notice-container").children().alert("close");
+                                window.location.href = "/view/profile";
+                            },3000);
                         }
                     },
                     error:function (data) {

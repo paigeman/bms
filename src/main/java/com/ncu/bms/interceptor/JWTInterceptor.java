@@ -30,6 +30,7 @@ public class JWTInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession();
         String token = (String) session.getAttribute("token");
         if(token==null||token.equals("")){
+            response.sendRedirect("/view/index");
             return false;
         }
         else{
@@ -39,6 +40,7 @@ public class JWTInterceptor implements HandlerInterceptor {
                 String admin_pwd = admin.getAdmin_pwd();
                 String tmp_admin_pwd = (String)map.get("admin_pwd");
                 if(!admin_pwd.equals(tmp_admin_pwd)||JWTUtil.verifyToken(token)!=0){
+                    response.sendRedirect("/view/index");
                     return false;
                 }
                 else{
@@ -51,6 +53,7 @@ public class JWTInterceptor implements HandlerInterceptor {
                 String tmp_reader_id = (String)map.get("reader_pwd");
                 if(!reader_pwd.equals(tmp_reader_id)||JWTUtil.verifyToken(token)!=0){
                     //System.out.println(request.getRequestURI()+"00");
+                    response.sendRedirect("/view/index");
                     return false;
                 }
                 else{
@@ -59,6 +62,7 @@ public class JWTInterceptor implements HandlerInterceptor {
                 }
             }
             else{
+                response.sendRedirect("/view/index");
                 return false;
             }
         }

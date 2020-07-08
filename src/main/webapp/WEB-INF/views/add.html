@@ -14,7 +14,47 @@
     <link rel="stylesheet" type="text/css" href="/css/profile.css" />
     <script>
         $(document).ready(function () {
+            var alertDiv = "<div class='alert alert-warning alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 300px'>警告！此项不能为空！</strong></div>";
+            var selectDiv = "<div class='alert alert-warning alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 300px'>警告！此项必须选择！</strong></div>";
+            var infoDiv = "<div class='alert alert-info alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 300px'>图书上架成功！</strong></div>";
+            var existDiv = "<div class='alert alert-danger alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 300px'>警告！图书已存在！</strong></div>";
+            var errorDiv = "<div class='alert alert-danger alert-dismissable fade in' role='alert'>" +
+                "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                "<span aria-hidden='true'>&times;</span></button>" +
+                "<strong style='font-size: 20px;padding-left: 250px'>警告！表单输入格式错误！请重试！</strong></div>";
             $("#book_add_submit").click(function () {
+                // console.log($("#profile-form select").val());
+                var form = $("#profile-form input");
+                for(var i = 0;i<form.length;i++){
+                    if(form[i].value==""){
+                        $("#notice-container").html(alertDiv);
+                        window.setTimeout(function () {
+                            $("#notice-container").children().alert("close");
+                        },3000);
+                        form[i].focus();
+                        return false;
+                    }
+                }
+                if($("#profile-form select").val()==null){
+                    $("#notice-container").html(selectDiv);
+                    window.setTimeout(function () {
+                        $("#notice-container").children().alert("close");
+                    },3000);
+                    $("#profile-form select").focus();
+                    return false;
+                }
                 $.ajax({
                     url:"/book/add",
                     type: "post",
@@ -22,15 +62,28 @@
                     dataType: "text",
                     data:JSON.stringify($("#profile-form").serializeJson()),
                     success:function (data) {
-                        if(data=="success"){
-                            window.location.href = "/view/add";
+                        if(data=="true"){
+                            $("#notice-container").html(infoDiv);
+                            window.setTimeout(function () {
+                                $("#notice-container").children().alert("close");
+                                window.location.href = "/view/add";
+                            },3000);
                         }
                         else{
-                            console.log("server add error!");
+                            $("#notice-container").html(existDiv);
+                            window.setTimeout(function () {
+                                $("#notice-container").children().alert("close");
+                                window.location.href = "/view/add";
+                            },3000);
                         }
                     },
                     error:function () {
                         console.log("add error");
+                        $("#notice-container").html(errorDiv);
+                        window.setTimeout(function () {
+                            $("#notice-container").children().alert("close");
+                            window.location.href = "/view/add";
+                        },3000);
                     }
                 })
             });
@@ -41,6 +94,7 @@
     </script>
 </head>
 <body>
+    <div id="notice-container"></div>
     <div class="container">
         <div class="row">
             <div class='col-xs-8 info-container container col-xs-offset-1'>
