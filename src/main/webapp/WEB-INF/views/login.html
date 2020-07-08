@@ -33,10 +33,26 @@
                $("#form-reader").css("display","none");
            });
            $("#reader_login").click(function () {
-               //var formData = $("#form-1").serializeArray();
-               //console.log(formData);
-               //console.log(formData[0].value);
-               //console.log(formData[1].value);
+               var form = $("#form-1 input");
+               var alertDiv = "<div class='alert alert-warning alert-dismissable fade in' role='alert'>" +
+                   "<button type='button' class='close' data-dismiss='alert' aria-label='Close'>" +
+                   "<span aria-hidden='true'>&times;</span></button>" +
+                   "<strong style='font-size: 20px;padding-left: 450px'>警告！此项不能为空！</strong></div>"
+               for(var i = 0;i<2;i++){
+                   if(form[i].value==""){
+                       $("#alert-container").html(alertDiv);
+                       window.setInterval(function () {
+                           $("#alert-container").children().alert("close");
+                       },3000);
+                       form[i].focus();
+                       return false;
+                   }
+               }
+               console.log(form);
+               var formData = $("#form-1").serializeArray();
+               console.log(formData);
+               console.log(formData[0].value);
+               console.log(formData[1].value);
                $.ajax({
                    url: "/reader/login",
                    type: "POST",
@@ -83,6 +99,7 @@
     </script>
 </head>
 <body class="login-body" id="login-success">
+    <div id="alert-container"></div>
     <div class="nav">
         <div class="container">
             <div class="row">

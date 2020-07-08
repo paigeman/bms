@@ -88,4 +88,9 @@ public class IndexController {
         return "fine";
     }
 
+    @RequestMapping(value = "/paySuccess")
+    public String showPaySuccess(){
+        return "paySuccess";
+    }
+
 }

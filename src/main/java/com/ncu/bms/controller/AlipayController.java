@@ -164,6 +164,8 @@ public class AlipayController {
                             + "\"timeout_express\":\""+ timeout_express +"\","
                             + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
                     String result = alipayClient.pageExecute(alipayTradePagePayRequest).getBody();
+//                    System.out.println(result);
+                    response.setContentType("text/html;charset=" + AlipayConfig.charset);
                     return result;
                 }
             }
@@ -174,8 +176,8 @@ public class AlipayController {
      * 支付宝同步通知页面
      * */
     @RequestMapping(value = "/alipayReturnNotice")
-    @ResponseBody
-    public String alipayReturnNotice(HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException, AlipayApiException {
+//    @ResponseBody
+    public String alipayReturnNotice(HttpSession session,HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException, AlipayApiException {
         //获取支付宝GET过来反馈信息
         Map<String,String> params = new HashMap<String,String>();
         Map<String,String[]> requestParams = request.getParameterMap();
@@ -200,7 +202,17 @@ public class AlipayController {
             String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"),"UTF-8");
             // 修改叮当状态，改为 支付成功，已付款; 同时新增支付流水
             if(iOrderService.isUpdateOrderStatus(out_trade_no, trade_no, total_amount)){
-                return "pay success";
+                String reader_id = (String)session.getAttribute("id");
+                Reader reader = iReaderService.isExist(reader_id);
+                Float reader_fine = reader.getReader_fine();
+                reader_fine -= new Float(total_amount);
+                reader.setReader_fine(reader_fine);
+                if(iReaderService.isUpdate(reader)){
+                    return "paySuccess";
+                }
+                else{
+                    return "reader fine update failed";
+                }
             }
             else{
                 return "update failed";

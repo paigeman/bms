@@ -27,7 +27,7 @@
                     var fineContent = "<div class='container'><div class='row'><div class='col-md-12 fine-container container'>" +
                         "<div class='row'><div class='col-md-3 fine-row'><span>￥"+((data=="")?"0.00":data)+"</span></div></div>" +
                         "<div class='row'><div class='col-md-3'><span>当前未缴纳罚款金额</span></div></div>" +
-                        "<div class='row'><div class='col-md-5 button-row'><div type='button' class='btn' id='go_pay' "+((data==""||data=="0.00")?"disabled":"")+">去交款</div></div></div></div></div></div>";
+                        "<div class='row'><div class='col-md-5 button-row'><div type='button' class='btn' id='go_pay' "+((data==""||data=="0.0")?"disabled='disabled'":"")+">去交款</div></div></div></div></div></div>";
                     $("#fine").html(fineContent);
                     $("#gp_pay").css("cssText","background-color:inherit");
                     $("#go_pay").mouseover(function () {
@@ -54,24 +54,28 @@
             //         console.log("error");
             //     }
             // });
-            $("#go_pay").click(function () {
-                // console.log(reader_fine);
-                $.ajax({
-                    url: "/alipay/createOrder?reader_fine="+reader_fine,
-                    type: "post",
-                    dataType: "json",
-                    async: false,
-                    success:function (data) {
-                        // console.log(data);
-                        if(data!=null){
-                            // console.log(data.id);
-                            top.location.href = "/alipay/goAlipay?orderId="+data.id;
+            $("#go_pay").click(function (obj) {
+                if(reader_fine=="0.0"){
+
+                }
+                else{
+                    $.ajax({
+                        url: "/alipay/createOrder?reader_fine="+reader_fine,
+                        type: "post",
+                        dataType: "json",
+                        async: false,
+                        success:function (data) {
+                            // console.log(data);
+                            if(data!=null){
+                                // console.log(data.id);
+                                top.location.href = "/alipay/goAlipay?orderId="+data.id;
+                            }
+                        },
+                        error:function () {
+                            console.log("error");
                         }
-                    },
-                    error:function () {
-                        console.log("error");
-                    }
-                });
+                    });
+                }
             });
         });
     </script>
