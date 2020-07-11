@@ -60,6 +60,15 @@
 ## 设计思路
 ![设计思路](document/设计思路.png)
 
+## 系统运行结果
+![登录界面](document/login.png)
+
+![注册界面](document/register.png)
+
+![用户界面](document/interface.png)
+
+![支付界面](document/pay.png)
+
 ## 联系方式
 邮箱：fadepi666@gmail.com
 
