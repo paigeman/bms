@@ -72,6 +72,11 @@
 
 ![支付界面](document/pay.png)
 
+## 未修复bug
+[1] 支付宝中文验签失败  
+[2] JWT超时异常抛出  
+...
+
 ## 联系方式
 邮箱：fadepi666@gmail.com
 
