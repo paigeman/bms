@@ -23,7 +23,7 @@
 [9] [Bootstrap CSS](https://v3.bootcss.com/css/)  
 
 ## 图片资源
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;背景图片来自于一些网站，是我用F12扣出来的。至于一些图标样式，感谢[IconFont](https://www.iconfont.cn/)提供的免费下载。如果背景图片有侵权，请画师即时联系邮箱:fadepi666@gmail.com。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;背景图片来自于一些网站，是我用F12扣出来的。至于一些图标样式，感谢[IconFont](https://www.iconfont.cn/)提供的免费下载。如果背景图片有侵权，请画师及时联系邮箱:fadepi666@gmail.com。
 
 ## 项目基本功能
 ![系统基本功能图](document/系统功能图.png)
