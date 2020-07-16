@@ -1,6 +1,7 @@
 # bms 图书管理系统
 
 ## 写在开始
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;请安装和配置[Maven](https://www.runoob.com/maven/maven-setup.html)，不能项目可能会无法运行。  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如要使用支付接口，请把[AlipayConfig.java](src/main/java/com/ncu/bms/util/AlipayConfig.java)里的app_id、商户私钥和支付宝公钥换成你自己的，同步通知地址和异步通知地址也请更换为你自己的。本项目的app_id、商户私钥和支付宝公钥将会被重置。  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数据库连接，请将[DBConfig.properties](src/main/resources/DBConfig.properties)里的相关信息更换成你自己数据库的信息。
 
@@ -10,7 +11,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总的来说，通过这次项目，我感觉我心挺大的，想搞很多花里胡哨的东西，但是又无奈于能力不足。不过，我还在学习过程中吧，应该还是挺有进步的。毕竟当初Web大作业的我看到分页是有多么恐慌，当初的我Ajax都不会，这我还是清楚的。
 
 ## 项目架构
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本项目基于**SSM(Spring+SpringMVC+Mybatis)** 框架集，再整合了**Mybatis Generator**逆向生成工具、**PageHelper**分页工具、**FreeMaker**视图解析器、**JWTToken**验证和**支付宝SDK**。前端使用**bootstrap css**和**jQuery**。通过Ajax实现了前后端分离。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本项目基于**SSM(Spring+SpringMVC+Mybatis)** 框架集，再整合了**Mybatis Generator**逆向生成工具、**PageHelper**分页工具、**FreeMaker**视图解析器、**JWTToken**验证和**支付宝SDK**，通过***Maven***进行管理。前端使用**bootstrap css**和**jQuery**。通过Ajax实现了前后端分离。
 
 ## 参考资料
 [1] [支付宝文档](https://opendocs.alipay.com/open/203/105285/)  
