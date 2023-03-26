@@ -55,10 +55,10 @@ public class IndexController {
     @ResponseBody
     public String showWho(HttpSession session){
         String who = (String)session.getAttribute("who");
-        if(who.equals("reader")){
+        if("reader".equals(who)){
             return "reader";
         }
-        else if(who.equals("admin")){
+        else if("admin".equals(who)){
             return "admin";
         }
         else{

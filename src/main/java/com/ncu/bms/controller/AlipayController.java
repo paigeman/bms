@@ -15,45 +15,47 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.n3r.idworker.Sid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/alipay")
 public class AlipayController {
 
-    @Autowired
-    private IOrderService iOrderService;
+    private final IOrderService iOrderService;
 
-    @Autowired
-    private IReaderService iReaderService;
+    private final IReaderService iReaderService;
 
-    @Autowired
-    private Sid sid;
+    private final Sid sid;
+
+    public AlipayController(IOrderService iOrderService, IReaderService iReaderService, Sid sid) {
+        this.iOrderService = iOrderService;
+        this.iReaderService = iReaderService;
+        this.sid = sid;
+    }
 
     @RequestMapping(value = "/getFine")
     @ResponseBody
     public String getFine(HttpSession session){
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("admin")){
+        if(who==null|| "".equals(who)|| "admin".equals(who)){
             return "false";
         }
         else{
-            String reader_id = (String) session.getAttribute("id");
-            if(reader_id==null||reader_id.equals("")){
+            String readerId = (String) session.getAttribute("id");
+            if(readerId ==null|| "".equals(readerId)){
                 return "false";
             }
             else{
-                Reader reader = iReaderService.isExist(reader_id);
+                Reader reader = iReaderService.isExist(readerId);
                 if (reader==null){
                     return "false";
                 }
@@ -62,8 +64,8 @@ public class AlipayController {
                         return null;
                     }
                     else{
-                        String reader_fine = reader.getReader_fine().toString();
-                        return reader_fine;
+                        String readerFine = reader.getReader_fine().toString();
+                        return readerFine;
                     }
                 }
             }
@@ -75,14 +77,14 @@ public class AlipayController {
     public Orders createOrder(HttpSession session,@RequestParam String reader_fine){
 //        System.out.println("enter1");
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("admin")){
+        if(who==null|| "".equals(who)|| "admin".equals(who)){
 //            System.out.println("enter2");
             return null;
         }
         else{
 //            System.out.println("enter3");
             String reader_id = (String) session.getAttribute("id");
-            if(reader_id==null||reader_id.equals("")){
+            if(reader_id==null|| "".equals(reader_id)){
 //                System.out.println("enter4");
                 return null;
             }
@@ -121,12 +123,12 @@ public class AlipayController {
     @ResponseBody
     public String goAlipay(HttpSession session,@RequestParam String orderId, HttpServletRequest request, HttpServletResponse response) throws AlipayApiException, UnsupportedEncodingException {
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("admin")){
+        if(who==null|| "".equals(who)|| "admin".equals(who)){
             return "false";
         }
         else{
             String reader_id = (String) session.getAttribute("id");
-            if(reader_id==null||reader_id.equals("")){
+            if(reader_id==null|| "".equals(reader_id)){
                 return "false";
             }
             else{
@@ -140,7 +142,6 @@ public class AlipayController {
                     alipayTradePagePayRequest.setReturnUrl(AlipayConfig.return_url);
                     alipayTradePagePayRequest.setNotifyUrl(AlipayConfig.notify_url);
                     //商户订单号，商户网站订单系统中唯一订单号，必填
-                    String out_trade_no = orderId;
                     //付款金额，必填
                     String total_amount = order.getOrder_amount();
                     //订单名称，必填
@@ -156,7 +157,7 @@ public class AlipayController {
                     String body = reader_id+"\t"+order.getOrder_amount();
                     // 该笔订单允许的最晚付款时间，逾期将关闭交易。取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）。 该参数数值不接受小数点， 如 1.5h，可转换为 90m。
                     String timeout_express = "15m";
-                    alipayTradePagePayRequest.setBizContent("{\"out_trade_no\":\""+ out_trade_no +"\","
+                    alipayTradePagePayRequest.setBizContent("{\"out_trade_no\":\""+ orderId +"\","
                             + "\"total_amount\":\""+ total_amount +"\","
                             + "\"subject\":\""+ subject +"\","
                             + "\"body\":\""+ body +"\","
@@ -178,27 +179,26 @@ public class AlipayController {
 //    @ResponseBody
     public String alipayReturnNotice(HttpSession session,HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException, AlipayApiException {
         //获取支付宝GET过来反馈信息
-        Map<String,String> params = new HashMap<String,String>();
+        Map<String,String> params = new HashMap<>();
         Map<String,String[]> requestParams = request.getParameterMap();
-        for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext();) {
-            String name = (String) iter.next();
-            String[] values = (String[]) requestParams.get(name);
+        for (String name : requestParams.keySet()) {
+            String[] values = requestParams.get(name);
             String valueStr = "";
             for (int i = 0; i < values.length; i++) {
                 valueStr = (i == values.length - 1) ? valueStr + values[i]
                         : valueStr + values[i] + ",";
             }
             //乱码解决，这段代码在出现乱码时使用
-            valueStr = new String(valueStr.getBytes("ISO-8859-1"), "utf-8");
+            valueStr = new String(valueStr.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             params.put(name, valueStr);
         }
         boolean signVerified = AlipaySignature.rsaCheckV2(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type);
         if(signVerified){
-            String out_trade_no = new String(request.getParameter("out_trade_no").getBytes("ISO-8859-1"),"UTF-8");
+            String out_trade_no = new String(request.getParameter("out_trade_no").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             //支付宝交易号
-            String trade_no = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"),"UTF-8");
+            String trade_no = new String(request.getParameter("trade_no").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             //付款金额
-            String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"),"UTF-8");
+            String total_amount = new String(request.getParameter("total_amount").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             // 修改叮当状态，改为 支付成功，已付款; 同时新增支付流水
             if(iOrderService.isUpdateOrderStatus(out_trade_no, trade_no, total_amount)){
                 String reader_id = (String)session.getAttribute("id");
@@ -228,11 +228,10 @@ public class AlipayController {
     @RequestMapping(value = "/alipayNotifyNotice")
     @ResponseBody
     public String alipayNotifyNotice(HttpServletRequest request, HttpServletRequest response) throws AlipayApiException, UnsupportedEncodingException {
-        Map<String,String> params = new HashMap<String,String>();
+        Map<String,String> params = new HashMap<>(8);
         Map<String,String[]> requestParams = request.getParameterMap();
-        for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext();) {
-            String name = (String) iter.next();
-            String[] values = (String[]) requestParams.get(name);
+        for (String name : requestParams.keySet()) {
+            String[] values = requestParams.get(name);
             String valueStr = "";
             for (int i = 0; i < values.length; i++) {
                 valueStr = (i == values.length - 1) ? valueStr + values[i]
@@ -245,13 +244,13 @@ public class AlipayController {
         boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type); //调用SDK验证签名
         if(signVerified){
             //商户订单号
-            String out_trade_no = new String(request.getParameter("out_trade_no").getBytes("ISO-8859-1"),"UTF-8");
+            String out_trade_no = new String(request.getParameter("out_trade_no").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             //支付宝交易号
-            String trade_no = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"),"UTF-8");
+            String trade_no = new String(request.getParameter("trade_no").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             //交易状态
-            String trade_status = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"),"UTF-8");
+            String trade_status = new String(request.getParameter("trade_status").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             //付款金额
-            String total_amount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"),"UTF-8");
+            String total_amount = new String(request.getParameter("total_amount").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             if(trade_status.equals("TRADE_FINISHED")){
                 //判断该笔订单是否在商户网站中已经做过处理
                 //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序

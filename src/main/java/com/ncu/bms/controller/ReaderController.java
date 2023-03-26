@@ -5,7 +5,6 @@ import com.ncu.bms.bean.Reader;
 import com.ncu.bms.service.IReaderService;
 import com.ncu.bms.util.JWTUtil;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +19,11 @@ import java.util.Map;
 @RequestMapping("/reader")
 public class ReaderController {
 
-    @Autowired
-    private IReaderService iReaderService;
+    private final IReaderService iReaderService;
+
+    public ReaderController(IReaderService iReaderService) {
+        this.iReaderService = iReaderService;
+    }
 
     @RequestMapping(value = "/login",method = {RequestMethod.POST})
     @ResponseBody
@@ -32,22 +34,18 @@ public class ReaderController {
         Reader reader = iReaderService.isExist(reader_id);
         try {
             if(reader==null){
-                //request.getRequestDispatcher("/view/index").forward(request,response);
                 return "false";
             }
             else{
                 String reader_pwd = reader.getReader_pwd();
                 if(!reader_pwd.equals(tmp_reader_pwd)){
-                    //request.getRequestDispatcher("/view/index").forward(request,response);
                     return "false";
                 }
                 else{
-                    Map<String,Object> map = new HashMap<>();
+                    Map<String,Object> map = new HashMap<>(8);
                     map.put("reader_id",reader_id);
                     map.put("reader_pwd",reader_pwd);
                     String token = JWTUtil.createToken(map);
-                    //response.setHeader("token",token);
-                    //request.getRequestDispatcher("/view/borrow").forward(request,response);
                     session.setAttribute("token",token);
                     session.setAttribute("who","reader");
                     session.setAttribute("id",reader_id);
@@ -64,7 +62,6 @@ public class ReaderController {
     @RequestMapping(value = "/register")
     @ResponseBody
     public String readerRegister(@RequestBody JSONObject data){
-//        System.out.println("enter");
         String reader_id = (String) data.get("reader_id");
         String reader_name = (String)data.get("reader_name");
         String reader_sex = (String)data.get("reader_sex");
@@ -93,26 +90,17 @@ public class ReaderController {
     @RequestMapping(value = "/profile")
     @ResponseBody
     public Reader queryReader(HttpSession session){
-        //System.out.println("enter");
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("admin")){
+        if(who==null|| "".equals(who)|| "admin".equals(who)){
             return null;
         }
         else{
             String reader_id = (String) session.getAttribute("id");
-            if(reader_id==null||reader_id.equals("")){
-                //System.out.println("enter");
+            if(reader_id==null|| "".equals(reader_id)){
                 return null;
             }
             else{
-                Reader reader = iReaderService.isExist(reader_id);
-                if(reader==null){
-                    return null;
-                }
-                else{
-                    //System.out.println("enter");
-                    return reader;
-                }
+                return iReaderService.isExist(reader_id);
             }
         }
     }
@@ -120,16 +108,13 @@ public class ReaderController {
     @RequestMapping(value = "/updateProfile")
     @ResponseBody
     public String updateProfile(HttpSession session,@RequestBody JSONObject data){
-        //System.out.println("enter");
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("admin")){
-            //System.out.println("enter");
+        if(who==null|| "".equals(who)|| "admin".equals(who)){
             return "false";
         }
         else{
             String reader_id = (String) session.getAttribute("id");
-            if(reader_id==null||reader_id.equals("")){
-                //System.out.println("enter");
+            if(reader_id==null|| "".equals(reader_id)){
                 return "false";
             }
             else{

@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.ncu.bms.bean.Book;
 import com.ncu.bms.service.IBookService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/book")
 public class BookController {
 
-    @Autowired
-    private IBookService iBookService;
+    private final IBookService iBookService;
+
+    public BookController(IBookService iBookService) {
+        this.iBookService = iBookService;
+    }
 
     @RequestMapping(value = "/queryWant")
     @ResponseBody
@@ -48,29 +50,28 @@ public class BookController {
 //        Integer book_number = Integer.parseInt(data.getString(""))
         //System.out.println(book_category+"\t"+book_name+"\t"+book_author+"\t"+book_publisher+"\t"+book_price+"\t"+book_number);
         Book book = new Book();
-        if(book_category!=null&&!book_category.equals("")){
+        if(book_category!=null&&!"".equals(book_category)){
             book.setBook_category(book_category);
         }
-        if(book_name!=null&&!book_name.equals("")){
+        if(book_name!=null&&!"".equals(book_name)){
             book.setBook_name(book_name);
         }
-        if(book_category!=null&&!book_category.equals("")){
+        if(book_category!=null&&!"".equals(book_category)){
             book.setBook_category(book_category);
         }
-        if(book_author!=null&&!book_author.equals("")){
+        if(book_author!=null&&!"".equals(book_author)){
             book.setBook_author(book_author);
         }
-        if(book_publisher!=null&&!book_publisher.equals("")){
+        if(book_publisher!=null&&!"".equals(book_publisher)){
             book.setBook_publisher(book_publisher);
         }
-        if(book_price!=null&&!book_price.equals("")){
+        if(book_price!=null&&!"".equals(book_price)){
             book.setBook_price(Float.parseFloat(book_price));
         }
         book.setBook_number(book_number);
 //        System.out.println(book);
-        PageInfo<Book> page = iBookService.queryBookByExample(offset,size,book);
-//        System.out.println(page);
-        return page;
+        //        System.out.println(page);
+        return iBookService.queryBookByExample(offset,size,book);
     }
 
     @RequestMapping(value = "/delete")
@@ -80,14 +81,14 @@ public class BookController {
         String book_No = data.getString("book_No");
         String who = (String)session.getAttribute("who");
 //        System.out.println("enter");
-        if(who==null||who.equals("")||who.equals("reader")){
+        if(who==null|| "".equals(who)|| "reader".equals(who)){
             //System.out.println("enter");
             return "false";
         }
         else {
 //            System.out.println("enter");
             String admin_id = (String) session.getAttribute("id");
-            if(admin_id==null||admin_id.equals("")){
+            if(admin_id==null|| "".equals(admin_id)){
                 //System.out.println("enter");
                 return "false";
             }
@@ -107,23 +108,17 @@ public class BookController {
     @ResponseBody
     public Book showBookInfo(HttpSession session){
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("reader")){
+        if(who==null|| "".equals(who)||who.equals("reader")){
             return null;
         }
         else{
             String admin_id = (String) session.getAttribute("id");
-            if(admin_id==null||admin_id.equals("")){
+            if(admin_id==null|| "".equals(admin_id)){
                 return null;
             }
             else{
                 String book_No = (String)session.getAttribute("book_No");
-                Book book = iBookService.isBookExist(book_No);
-                if(book==null){
-                    return null;
-                }
-                else {
-                    return book;
-                }
+                return iBookService.isBookExist(book_No);
             }
         }
     }
@@ -132,13 +127,13 @@ public class BookController {
     @ResponseBody
     public String updateBookInfo(HttpSession session,@RequestBody JSONObject data){
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("reader")){
+        if(who==null|| "".equals(who)|| "reader".equals(who)){
             //System.out.println("enter");
             return "false";
         }
         else{
             String admin_id = (String) session.getAttribute("id");
-            if(admin_id==null||admin_id.equals("")){
+            if(admin_id==null|| "".equals(admin_id)){
                 return "false";
             }
             else{
@@ -163,7 +158,7 @@ public class BookController {
                     String book_limit = (String)data.get("book_limit");
                     String book_per_day = (String)data.get("book_per_day");
                     book_price = book_price.split("元")[0];
-                    book_ban = ((book_ban.equals("是"))?"1":"0");
+                    book_ban = (("是".equals(book_ban))?"1":"0");
                     book_limit = book_limit.split("天")[0];
                     book_per_day = book_per_day.split("元")[0];
                     book.setBook_name(book_name);
@@ -192,13 +187,13 @@ public class BookController {
     @ResponseBody
     public String addBook(HttpSession session,@RequestBody JSONObject data){
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("reader")){
+        if(who==null|| "".equals(who)|| "reader".equals(who)){
             //System.out.println("enter");
             return "false";
         }
         else{
             String admin_id = (String) session.getAttribute("id");
-            if(admin_id==null||admin_id.equals("")){
+            if(admin_id==null|| "".equals(admin_id)){
                 return "false";
             }
             else{

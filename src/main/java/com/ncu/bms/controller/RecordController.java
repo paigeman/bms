@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.ncu.bms.bean.Record;
 import com.ncu.bms.service.IRecordService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,35 +17,33 @@ import java.util.Date;
 @RequestMapping("/record")
 public class RecordController {
 
-    @Autowired
-    private IRecordService iRecordService;
+    private final IRecordService iRecordService;
+
+    public RecordController(IRecordService iRecordService) {
+        this.iRecordService = iRecordService;
+    }
 
     @RequestMapping(value = "/borrow")
     @ResponseBody
     public String borrowBook(HttpSession session, @RequestBody JSONObject data){
-//        System.out.println("enter");
-//        return "false";
-        String book_No = data.getString("book_No");
-//        System.out.println(book_No);
+        String bookNo = data.getString("book_No");
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("admin")){
-            //System.out.println("enter");
+        if(who==null|| "".equals(who)|| "admin".equals(who)){
             return "false";
         }
         else{
-            String reader_id = (String) session.getAttribute("id");
-            if(reader_id==null||reader_id.equals("")){
-                //System.out.println("enter");
+            String readerId = (String) session.getAttribute("id");
+            if(readerId==null|| "".equals(readerId)){
                 return "false";
             }
             else{
-                String admin_id = "root";
-                Date record_borrow = new Date();
+                String adminId = "root";
+                Date recordBorrow = new Date();
                 Record record = new Record();
-                record.setRecord_book(book_No);
-                record.setRecord_reader(reader_id);
-                record.setRecord_admin(admin_id);
-                record.setRecord_borrow(record_borrow);
+                record.setRecord_book(bookNo);
+                record.setRecord_reader(readerId);
+                record.setRecord_admin(adminId);
+                record.setRecord_borrow(recordBorrow);
                 if(iRecordService.isAddRecord(record)){
                     return "true";
                 }
@@ -60,23 +57,18 @@ public class RecordController {
     @RequestMapping(value = "querySpecificReader")
     @ResponseBody
     public PageInfo<Record> querySpecificReader(HttpSession session,@RequestParam(defaultValue = "1")int offset,@RequestParam(defaultValue = "5")int size){
-//        System.out.println("enter");
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("admin")){
-//            System.out.println("enter");
+        if(who==null|| "".equals(who)|| "admin".equals(who)){
             return null;
         }
         else{
-//            System.out.println("enter");
-            String reader_id = (String) session.getAttribute("id");
-//            System.out.println("enter");
-            if(reader_id==null||reader_id.equals("")){
+            String readerId = (String) session.getAttribute("id");
+            if(readerId==null|| "".equals(readerId)){
                 System.out.println("enter");
                 return null;
             }
             else{
-                PageInfo<Record> page = iRecordService.queryRecordByAttribute(offset,size,"record_reader",reader_id,"record_reader =");
-                return page;
+                return iRecordService.queryRecordByAttribute(offset,size,"record_reader",readerId,"record_reader =");
             }
         }
     }
@@ -85,20 +77,16 @@ public class RecordController {
     @ResponseBody
     public PageInfo<Record> queryAll(HttpSession session,@RequestParam(defaultValue = "1")int offset,@RequestParam(defaultValue = "5")int size){
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("reader")){
+        if(who==null|| "".equals(who)|| "reader".equals(who)){
             return null;
         }
         else{
-            String admin_id = (String) session.getAttribute("id");
-            if(admin_id==null||admin_id.equals("")){
+            String adminId = (String) session.getAttribute("id");
+            if(adminId==null|| "".equals(adminId)){
                 return null;
             }
             else{
-                PageInfo<Record> page = iRecordService.queryAllRecord(offset,size);
-//                Record record = new Record();
-//                record.setRecord_is_lost(new Integer(0));
-//                PageInfo<Record> page = iRecordService.queryRecordByExample(offset,size,record);
-                return page;
+                return iRecordService.queryAllRecord(offset,size);
             }
         }
     }
@@ -107,50 +95,35 @@ public class RecordController {
     @ResponseBody
     public PageInfo<Record> queryWant(HttpSession session,@RequestBody JSONObject data,@RequestParam(defaultValue = "1") int offset,@RequestParam(defaultValue = "5") int size){
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("reader")){
+        if(who==null|| "".equals(who)|| "reader".equals(who)){
             return null;
         }
         else{
-            String admin_id = (String) session.getAttribute("id");
-            if(admin_id==null||admin_id.equals("")){
+            String adminId = (String) session.getAttribute("id");
+            if(adminId==null|| "".equals(adminId)){
                 return null;
             }
             else{
-                String record_book = (String)data.get("record_book");
-                String record_reader = (String)data.get("record_reader");
+                String recordBook = (String)data.get("record_book");
+                String recordReader = (String)data.get("record_reader");
                 Integer record_is_return;
                 Integer record_is_overtime;
                 Record record = new Record();
-//                if(data.get("record_is_return")==null){
-//                    record_is_return = new Integer(0);
-//                }
-//                else{
-//                    record_is_return = new Integer((String) data.get("record_is_return"));
-//                }
                 if(data.get("record_is_return")!=null){
-                    record_is_return = new Integer((String) data.get("record_is_return"));
+                    record_is_return = Integer.valueOf((String) data.get("record_is_return"));
                     record.setRecord_is_return(record_is_return);
                 }
-//                if(data.get("record_is_overtime")==null){
-//                    record_is_overtime = new Integer(0);
-//                }
-//                else{
-//                    record_is_overtime = new Integer((String)data.get("record_is_overtime"));
-//                }
                 if(data.get("record_is_overtime")!=null){
-                    record_is_overtime = new Integer((String)data.get("record_is_overtime"));
+                    record_is_overtime = Integer.valueOf((String)data.get("record_is_overtime"));
                     record.setRecord_is_overtime(record_is_overtime);
                 }
-                if(record_book!=null&&!record_book.equals("")){
-                    record.setRecord_book(record_book);
+                if(recordBook!=null&&!"".equals(recordBook)){
+                    record.setRecord_book(recordBook);
                 }
-                if(record_reader!=null&&!record_reader.equals("")){
-                    record.setRecord_reader(record_reader);
+                if(recordReader!=null&&!"".equals(recordReader)){
+                    record.setRecord_reader(recordReader);
                 }
-//                record.setRecord_is_lost(new Integer(0));
-
-                PageInfo<Record> page = iRecordService.queryRecordByExample(offset,size,record);
-                return page;
+                return iRecordService.queryRecordByExample(offset,size,record);
             }
         }
     }
@@ -159,12 +132,12 @@ public class RecordController {
     @ResponseBody
     public String returnBook(HttpSession session,@RequestParam Integer record_id){
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("reader")){
+        if(who==null|| "".equals(who)|| "reader".equals(who)){
             return "false";
         }
         else{
             String admin_id = (String) session.getAttribute("id");
-            if(admin_id==null||admin_id.equals("")){
+            if(admin_id==null|| "".equals(admin_id)){
                 return "false";
             }
             else{
@@ -182,12 +155,12 @@ public class RecordController {
     @ResponseBody
     public String setLost(HttpSession session,@RequestParam Integer record_id){
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("reader")){
+        if(who==null|| "".equals(who)|| "reader".equals(who)){
             return "false";
         }
         else{
             String admin_id = (String) session.getAttribute("id");
-            if(admin_id==null||admin_id.equals("")){
+            if(admin_id==null|| "".equals(admin_id)){
                 return "false";
             }
             else{
@@ -205,12 +178,12 @@ public class RecordController {
     @ResponseBody
     public String deleteBook(HttpSession session,@RequestParam Integer record_id){
         String who = (String)session.getAttribute("who");
-        if(who==null||who.equals("")||who.equals("reader")){
+        if(who==null|| "".equals(who)|| "reader".equals(who)){
             return "false";
         }
         else{
             String admin_id = (String) session.getAttribute("id");
-            if(admin_id==null||admin_id.equals("")){
+            if(admin_id==null|| "".equals(admin_id)){
                 return "false";
             }
             else{
