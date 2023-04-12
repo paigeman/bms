@@ -41,6 +41,6 @@ jobs:
           envs: MYSQL_PASSWORD,WORKER_DIR
           script_stop: true
           script: |
-            export MYSQL_ROOT_PASSWORD MYSQL_PASSWORD
-            cd WORKER_DIR
+            export MYSQL_ROOT_PASSWORD $MYSQL_PASSWORD
+            cd $WORKER_DIR
             docker-compose up -d
