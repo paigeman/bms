@@ -16,5 +16,29 @@ jobs:
         run: docker build --file Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/bms:latest .
       - name: Docker Login
         run: docker login -u  ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Push to Dockerhub
+      - name: Push to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/bms:latest
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: "ci/docker-compose.yml,scripts/db/bms.sql"
+          target: ${{ secrets.WORKER_DIR }}
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v0.1.9
+        env:
+          MYSQL_PASSWORD ${{ secrets.MYSQL_PASSWORD }}
+          WORKER_DIR ${{ secrets.WORKER_DIR }}
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          envs: MYSQL_PASSWORD,WORKER_DIR
+          script: |
+            export MYSQL_PASSWORD $MYSQL_PASSWORD
+            cd ${{ secrets.WORKER_DIR }}
+            docker-compose up -d
