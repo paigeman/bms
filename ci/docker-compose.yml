@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  bms:
+    depends_on:
+      - mysql
+    build: .
+    ports:
+      - "8080:8080"
+    links:
+      - mysql
+  mysql:
+    image: mysql:8.0.29
+    volumes:
+      - ../scripts/db/:/docker-entrypoint-initdb.d/
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
