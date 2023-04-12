@@ -43,4 +43,4 @@ jobs:
           script: |
             export MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
             cd $WORKER_DIR
-            docker-compose up -d
+            docker compose up -d
