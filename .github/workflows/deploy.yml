@@ -27,7 +27,7 @@ jobs:
           port: ${{ secrets.PORT }}
           source: "ci/docker-compose.yml,scripts/db/bms.sql"
           target: ${{ secrets.WORKER_DIR }}
-          strip_components: 2
+          strip_components: 1,2
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.9
         env:
@@ -39,7 +39,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           envs: MYSQL_PASSWORD,WORKER_DIR
+          script_stop: true
           script: |
-            export MYSQL_PASSWORD $MYSQL_PASSWORD
-            cd $WORKER_DIR
+            export MYSQL_ROOT_PASSWORD MYSQL_PASSWORD
+            cd WORKER_DIR
             docker-compose up -d
