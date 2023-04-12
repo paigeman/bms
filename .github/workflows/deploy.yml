@@ -13,7 +13,7 @@ jobs:
       - name: Build with Maven
         run: mvn -DskipTests=true package
       - name: Move war to ci Directory
-        run: mv target/bms.war ci/
+        run: mv target/bms.war ci/ && ls ci
       - name: Build Docker Image
         run: docker build --file ci/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/bms:latest .
       - name: Docker Login
