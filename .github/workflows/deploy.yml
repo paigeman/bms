@@ -13,7 +13,7 @@ jobs:
       - name: Build with Maven
         run: mvn -DskipTests=true package
       - name: Build Docker Image
-        run: docker build --file ci/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/bms:latest
+        run: docker build --file ci/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/bms:latest .
       - name: Docker Login
         run: docker login -u  ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push to Dockerhub
