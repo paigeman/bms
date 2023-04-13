@@ -18,6 +18,20 @@ jobs:
         run: docker login -u  ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Push to Docker Hub
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/bms:latest
+      - name: Stop the Previous Services
+        uses: appleboy/ssh-action@v0.1.9
+        env:
+          WORKER_DIR: ${{ secrets.WORKER_DIR }}
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script_stop: true
+          envs: WORKER_DIR
+          script: |
+            cd $WORKER_DIR
+            docker compose down
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -41,6 +55,8 @@ jobs:
           envs: MYSQL_PASSWORD,WORKER_DIR
           script_stop: true
           script: |
-            export MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
             cd $WORKER_DIR
-            docker compose up -d
+            cat > .env << EOF
+            MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
+            EOF        
+            docker compose --env-file .env up -d
