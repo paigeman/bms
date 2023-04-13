@@ -56,7 +56,5 @@ jobs:
           script_stop: true
           script: |
             cd $WORKER_DIR
-            cat > .env << EOF
-            MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
-            EOF        
+            echo -e "MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD\n" > .env      
             docker compose --env-file .env up -d
