@@ -8,6 +8,8 @@ services:
       - "8080:8080"
     links:
       - mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
   mysql:
     image: mysql:8.0.29
     volumes:
