@@ -10,10 +10,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: test
-        run: cat pom.xml
-      - name: Build with Maven
-        run: mvn -DskipTests=true org.apache.maven.plugins:maven-war-plugin:3.2.2:war
+        run: mvn -DskipTests=true clean package -f pom.xml
       - name: Build Docker Image
         run: docker build --file Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/bms:latest .
       - name: Docker Login
@@ -24,16 +21,18 @@ jobs:
         uses: appleboy/ssh-action@v0.1.9
         env:
           WORKER_DIR: ${{ secrets.WORKER_DIR }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script_stop: true
-          envs: WORKER_DIR
+          envs: WORKER_DIR,DOCKERHUB_USERNAME
           script: |
             cd $WORKER_DIR
             docker compose down
+            docker rmi $DOCKERHUB_USERNAME/bms:latest
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
         with:
