@@ -10,6 +10,8 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: test
+        run: cat pom.xml
       - name: Build with Maven
         run: mvn -DskipTests=true package
       - name: Build Docker Image
