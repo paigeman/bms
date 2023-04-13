@@ -1,5 +1,8 @@
 # bms 图书管理系统
 
+## demo
+http://120.55.56.8:8080/view/index
+
 ## 写在开始
 1. 请安装和配置[Maven](https://www.runoob.com/maven/maven-setup.html)，不能项目可能会无法运行。  
 2. 如要使用支付接口，请把[AlipayConfig.java](src/main/java/com/ncu/bms/util/AlipayConfig.java)里的app_id、商户私钥和支付宝公钥换成你自己的，同步通知地址和异步通知地址也请更换为你自己的。本项目的app_id、商户私钥和支付宝公钥将会被重置。  
