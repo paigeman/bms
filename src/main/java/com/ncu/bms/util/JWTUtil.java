@@ -1,8 +1,10 @@
 package com.ncu.bms.util;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
@@ -15,7 +17,7 @@ public class JWTUtil {
      * key
      */
     //private final static String SECRET_KEY = "0123456789_0123456789_0123456789";
-    private final static String SECRET_KEY = "fadepi";
+    private final static SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     /**
      * 过期时间（毫秒单位）
      */
@@ -81,7 +83,7 @@ public class JWTUtil {
      * @return
      */
     public static Key generateKey() {
-        return new SecretKeySpec(SECRET_KEY.getBytes(), SignatureAlgorithm.HS256.getJcaName());
+        return new SecretKeySpec(SECRET_KEY.getEncoded(), SignatureAlgorithm.HS256.getJcaName());
     }
 
 }

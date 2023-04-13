@@ -17,6 +17,9 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+create database bms;
+use bms;
+
 -- ----------------------------
 -- Table structure for admin
 -- ----------------------------
