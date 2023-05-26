@@ -42,7 +42,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "ci/k8s/deploy.yaml,scripts/db/bms.sql"
+          source: "ci/k8s/deploy.yaml,scripts/db/bms.sql,ci/k8s/port-forward.sh"
           target: ${{ secrets.WORKER_DIR }}
           strip_components: 1
       - name: executing remote ssh commands using password
@@ -65,5 +65,7 @@ jobs:
             export NFS_HOST=$NFS_HOST
             export NFS_PATH=$NFS_PATH
             export MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
+            export PORT_FORWARD_HOST=$PORT_FORWARD_HOST
             envsubst < k8s/deploy.yaml | kubectl apply -f -
-            nohup kubectl port-forward deployment/bms 8080:8080 --address=$PORT_FORWARD_HOST > port-forward.log 2>&1 &
+            chmod u+x k8s/port-forward.sh
+            ./k8s/port-forward.sh
