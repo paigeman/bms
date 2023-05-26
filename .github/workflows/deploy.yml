@@ -61,6 +61,5 @@ jobs:
             export NFS_HOST=$NFS_HOST
             export NFS_PATH=$NFS_PATH
             export MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
-            echo $MYSQL_ROOT_PASSWORD
-            kubectl apply -f k8s/deploy.yaml
+            envsubst < k8s/deploy.yaml | kubectl apply -f -
             nohup kubectl port-forward deployment/bms 8080:8080 &
