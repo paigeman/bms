@@ -66,8 +66,7 @@ jobs:
             export NFS_PATH=$NFS_PATH
             export MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
             export PORT_FORWARD_HOST=$PORT_FORWARD_HOST
-            chmod u+x k8s/kill-nohup.sh
-            ./k8s/kill-nohup.sh "kubectl port-forward deployment/bms"
+            if [ -f "save_pid.txt" ]; then if kill -9 `cat save_pid.txt` 2>/dev/null; then echo "进程已成功终止。"; else echo "进程不存在或无法终止。"; fi; else echo "文件不存在，无需执行删除命令。"; fi
             envsubst < k8s/deploy.yaml | kubectl apply -f -
             chmod u+x k8s/port-forward.sh
             ./k8s/port-forward.sh
