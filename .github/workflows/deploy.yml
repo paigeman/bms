@@ -22,18 +22,16 @@ jobs:
         uses: appleboy/ssh-action@v0.1.9
         env:
           WORKER_DIR: ${{ secrets.WORKER_DIR }}
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script_stop: true
-          envs: WORKER_DIR,DOCKERHUB_USERNAME
+          envs: WORKER_DIR
           script: |
             cd $WORKER_DIR
-            docker compose down
-            docker rmi $DOCKERHUB_USERNAME/bms:latest
+            [ -f "k8s/deploy.yaml" ] && kubectl delete -f k8s/deploy.yaml
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -41,7 +39,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "ci/docker-compose.yml,scripts/db/bms.sql"
+          source: "ci/k8s/deploy.yaml,scripts/db/bms.sql"
           target: ${{ secrets.WORKER_DIR }}
           strip_components: 1
       - name: executing remote ssh commands using password
@@ -49,14 +47,18 @@ jobs:
         env:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           WORKER_DIR: ${{ secrets.WORKER_DIR }}
+          NFS_HOST: ${{ secrets.NFS_HOST }}
+          NFS_PATH: ${{ secrets.NFS_PATH }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          envs: MYSQL_PASSWORD,WORKER_DIR
+          envs: MYSQL_PASSWORD,WORKER_DIR,NFS_HOST,NFS_PATH
           script_stop: true
           script: |
             cd $WORKER_DIR
-            echo -e "MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD\n" > .env      
-            docker compose --env-file .env up -d
+            export NFS_HOST=$NFS_HOST
+            export NFS_PATH=$NFS_PATH
+            kubectl apply -f k8s/deploy.yaml
+            nohup kubectl port-forward deployment/bms 8080:8080 &
