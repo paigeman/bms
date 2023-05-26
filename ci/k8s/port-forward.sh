@@ -10,6 +10,7 @@ while true; do
     if [[ $STATUS == "true" ]]; then
         echo "Container is running. Executing command..."
         nohup kubectl port-forward deployment/bms 8080:8080 --address=$PORT_FORWARD_HOST > port-forward.log 2>&1 &
+        echo $! > save_pid.txt
         break
     fi
 
