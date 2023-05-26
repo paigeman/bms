@@ -68,6 +68,7 @@ jobs:
             export PORT_FORWARD_HOST=$PORT_FORWARD_HOST
             chmod u+x k8s/kill-nohup.sh
             ./k8s/kill-nohup.sh "kubectl port-forward deployment/bms"
+            echo "hello world"
             envsubst < k8s/deploy.yaml | kubectl apply -f -
             chmod u+x k8s/port-forward.sh
             ./k8s/port-forward.sh
