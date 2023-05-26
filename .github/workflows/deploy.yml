@@ -21,17 +21,20 @@ jobs:
       - name: Stop the Previous Services
         uses: appleboy/ssh-action@v0.1.9
         env:
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           WORKER_DIR: ${{ secrets.WORKER_DIR }}
+          NFS_HOST: ${{ secrets.NFS_HOST }}
+          NFS_PATH: ${{ secrets.NFS_PATH }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script_stop: true
-          envs: WORKER_DIR
+          envs: MYSQL_PASSWORD,WORKER_DIR,NFS_HOST,NFS_PATH
           script: |
             cd $WORKER_DIR
-            if [ -f "k8s/deploy.yaml" ]; then kubectl delete -f k8s/deploy.yaml; else echo "文件不存在，无需执行删除命令。"; fi
+            if [ -f "k8s/deploy.yaml" ]; then envsubst < k8s/deploy.yaml | kubectl delete -f -; else echo "文件不存在，无需执行删除命令。"; fi
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
         with:
