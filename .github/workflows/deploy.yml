@@ -30,13 +30,8 @@ jobs:
           script_stop: true
           envs: WORKER_DIR
           script: |
-            echo "hello world"
-            echo "$WORKER_DIR"
             cd $WORKER_DIR
-            echo "hello world"
-            kubectl --help
-            [ -f "k8s/deploy.yaml" ] && kubectl delete -f k8s/deploy.yaml
-            echo "hello world"
+            if [ -f "k8s/deploy.yaml" ]; then kubectl delete -f k8s/deploy.yaml; else echo "文件不存在，无需执行删除命令。"; fi
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
         with:
