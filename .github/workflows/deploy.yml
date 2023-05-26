@@ -31,7 +31,9 @@ jobs:
           envs: WORKER_DIR
           script: |
             echo "hello world"
+            echo "$WORKER_DIR"
             cd $WORKER_DIR
+            pwd
             [ -f "k8s/deploy.yaml" ] && kubectl delete -f k8s/deploy.yaml
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
