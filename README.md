@@ -8,6 +8,8 @@ http://120.55.56.8:8080/view/index
 2. 如要使用支付接口，请把[AlipayConfig.java](src/main/java/com/ncu/bms/util/AlipayConfig.java)里的app_id、商户私钥和支付宝公钥换成你自己的，同步通知地址和异步通知地址也请更换为你自己的。本项目的app_id、商户私钥和支付宝公钥将会被重置。  
 3. 数据库连接，请将[DBConfig.properties](src/main/resources/DBConfig.properties)里的相关信息更换成你自己数据库的信息。
 4. 因为升级了spring版本，所以请使用tomcat10和jdk17
+5. 支持docker、docker-compose、kubernetes部署，docker-compose、docker部署请修改数据库配置文件中的`jdbc.jdbcUrl`，其中docker-compose方式部署修改为`jdbc:mysql://mysql:3306/bms?serverTimezone=UTC&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true`，docker方式部署按自身情况修改
+6. 管理员账号`root/987654321`，目前付款功能无法测试，其它功能可能有bug，欢迎提issue或pr
 
 ## 项目背景
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本项目写于大三下学期暑期专业实训，本来是为了应付小学期而写，但是在写的过程中又有自己的一些想法，所以也不算一次单纯的作业了。  
