@@ -36,6 +36,7 @@ jobs:
             echo "hello world"
             kubectl --help
             [ -f "k8s/deploy.yaml" ] && kubectl delete -f k8s/deploy.yaml
+            echo "hello world"
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
         with:
