@@ -52,12 +52,13 @@ jobs:
           WORKER_DIR: ${{ secrets.WORKER_DIR }}
           NFS_HOST: ${{ secrets.NFS_HOST }}
           NFS_PATH: ${{ secrets.NFS_PATH }}
+          PORT_FORWARD_HOST: ${{ secrets.PORT_FORWARD_HOST }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          envs: MYSQL_PASSWORD,WORKER_DIR,NFS_HOST,NFS_PATH
+          envs: MYSQL_PASSWORD,WORKER_DIR,NFS_HOST,NFS_PATH,PORT_FORWARD_HOST
           script_stop: true
           script: |
             cd $WORKER_DIR
@@ -65,4 +66,4 @@ jobs:
             export NFS_PATH=$NFS_PATH
             export MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
             envsubst < k8s/deploy.yaml | kubectl apply -f -
-            nohup kubectl port-forward deployment/bms 8080:8080 &
+            nohup kubectl port-forward deployment/bms 8080:8080 --address=$PORT_FORWARD_HOST > port-forward.log 2>&1 &
