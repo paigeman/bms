@@ -9,7 +9,7 @@ if [ -z "$process_name" ]; then
 fi
 
 # 使用 pgrep 命令获取匹配进程名称或关键字的进程 ID
-pids=$(pgrep "$process_name")
+pids=$(pgrep -f "$process_name")
 
 if [ -n "$pids" ]; then
   # 循环遍历进程 ID，发送终止信号给每个进程
