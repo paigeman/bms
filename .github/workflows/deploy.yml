@@ -67,8 +67,7 @@ jobs:
             export MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
             export PORT_FORWARD_HOST=$PORT_FORWARD_HOST
             chmod u+x k8s/kill-nohup.sh
-            ./k8s/kill-nohup.sh "kubectl port-forward deployment/bms"
-            echo "hello world"
+            ./k8s/kill-nohup.sh "nohup kubectl port-forward deployment/bms 8080:8080 --address=$PORT_FORWARD_HOST > port-forward.log 2>&1 &"
             envsubst < k8s/deploy.yaml | kubectl apply -f -
             chmod u+x k8s/port-forward.sh
             ./k8s/port-forward.sh
