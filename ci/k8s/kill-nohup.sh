@@ -8,13 +8,15 @@ if [ -z "$process_name" ]; then
   exit 1
 fi
 
-# 使用 ps 命令结合 grep 过滤进程并获取进程的 PID
-pid=$(ps aux | grep "$process_name" | grep -v grep | awk '{print $2}')
+# 使用 pgrep 命令获取匹配进程名称或关键字的进程 ID
+pids=$(pgrep "$process_name")
 
-if [ -n "$pid" ]; then
-  # 找到进程的 PID，发送终止信号给进程
-  kill "$pid"
-  echo "进程 $pid 已关闭。"
+if [ -n "$pids" ]; then
+  # 循环遍历进程 ID，发送终止信号给每个进程
+  for pid in $pids; do
+    kill "$pid"
+    echo "进程 $pid 已关闭。"
+  done
 else
   echo "未找到进程 $process_name。"
 fi
