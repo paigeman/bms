@@ -44,3 +44,52 @@ spec:
             path: ${NFS_PATH}
             server: ${NFS_HOST}
 status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: bms
+  name: bms
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: bms
+  type: NodePort
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+data:
+  tls.crt: ${BMS_CERT}
+  tls.key: ${BMS_KEY}
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: bms
+type: kubernetes.io/tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bms
+spec: 
+  tls:
+  - hosts:
+    - bms.yzj.icu
+    secretName: bms
+  rules:
+  - host: bms.yzj.icu
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: bms
+            port:
+              number: 8080
