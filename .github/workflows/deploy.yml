@@ -36,7 +36,7 @@ jobs:
           envs: MYSQL_ROOT_PASSWORD,WORKER_DIR,NFS_HOST,NFS_PATH,BMS_CERT,BMS_KEY
           script: |
             cd $WORKER_DIR
-            if [ -f "k8s/deploy.yaml" ]; then envsubst < k8s/deploy.yaml | kubectl delete -f -; else echo "文件不存在，无需执行删除命令。"; fi
+            if [ -f "k8s/deploy.yaml" ]; then envsubst < k8s/deploy.yaml | kubectl delete -f - || true; else echo "文件不存在，无需执行删除命令。"; fi
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
         with:
