@@ -1,7 +1,7 @@
 # bms 图书管理系统
 
 ## demo
-http://120.55.56.8:8080/view/index
+https://bms.yzj.icu/view/index
 
 ## 写在开始
 1. 请安装和配置[Maven](https://www.runoob.com/maven/maven-setup.html)，不能项目可能会无法运行。  
