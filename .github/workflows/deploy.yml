@@ -21,20 +21,22 @@ jobs:
       - name: Stop the Previous Services
         uses: appleboy/ssh-action@v0.1.9
         env:
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           WORKER_DIR: ${{ secrets.WORKER_DIR }}
           NFS_HOST: ${{ secrets.NFS_HOST }}
           NFS_PATH: ${{ secrets.NFS_PATH }}
+          BMS_CERT: ${{ secrets.BMS_CERT }}
+          BMS_KEY: ${{ secrets.BMS_KEY }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script_stop: true
-          envs: MYSQL_PASSWORD,WORKER_DIR,NFS_HOST,NFS_PATH
+          envs: MYSQL_ROOT_PASSWORD,WORKER_DIR,NFS_HOST,NFS_PATH,BMS_CERT,BMS_KEY
           script: |
             cd $WORKER_DIR
-            if [ -f "k8s/deploy.yaml" ]; then envsubst < k8s/deploy.yaml | kubectl delete -f -; else echo "文件不存在，无需执行删除命令。"; fi
+            if [ -f "k8s/deploy.yaml" ]; then envsubst < k8s/deploy.yaml | kubectl delete -f - || true; else echo "文件不存在，无需执行删除命令。"; fi
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -42,31 +44,30 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "ci/k8s/deploy.yaml,scripts/db/bms.sql,ci/k8s/port-forward.sh,ci/k8s/kill-nohup.sh"
+          source: "ci/k8s/deploy.yaml,scripts/db/bms.sql,ci/k8s/port-forward.sh"
           target: ${{ secrets.WORKER_DIR }}
           strip_components: 1
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.9
         env:
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           WORKER_DIR: ${{ secrets.WORKER_DIR }}
           NFS_HOST: ${{ secrets.NFS_HOST }}
           NFS_PATH: ${{ secrets.NFS_PATH }}
           PORT_FORWARD_HOST: ${{ secrets.PORT_FORWARD_HOST }}
+          BMS_CERT: ${{ secrets.BMS_CERT }}
+          BMS_KEY: ${{ secrets.BMS_KEY }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          envs: MYSQL_PASSWORD,WORKER_DIR,NFS_HOST,NFS_PATH,PORT_FORWARD_HOST
+          envs: MYSQL_ROOT_PASSWORD,WORKER_DIR,NFS_HOST,NFS_PATH,PORT_FORWARD_HOST,BMS_CERT,BMS_KEY
           script_stop: true
           script: |
             cd $WORKER_DIR
-            export NFS_HOST=$NFS_HOST
-            export NFS_PATH=$NFS_PATH
-            export MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
-            export PORT_FORWARD_HOST=$PORT_FORWARD_HOST
-            if [ -f "save_pid.txt" ]; then if kill -9 `cat save_pid.txt` 2>/dev/null; then echo "进程已成功终止。"; else echo "进程不存在或无法终止。"; fi; else echo "文件不存在，无需执行删除命令。"; fi
+            # if [ -f "save_pid.txt" ]; then if kill -9 `cat save_pid.txt` 2>/dev/null; then echo "进程已成功终止。"; else echo "进程不存在或无法终止。"; fi; else echo "文件不存在，无需执行删除命令。"; fi
+            if [ -f "ingress_save_pid.txt" ]; then if kill -9 `cat ingress_save_pid.txt` 2>/dev/null; then echo "进程已成功终止。"; else echo "进程不存在或无法终止。"; fi; else echo "文件不存在，无需执行删除命令。"; fi
             envsubst < k8s/deploy.yaml | kubectl apply -f -
             chmod u+x k8s/port-forward.sh
             ./k8s/port-forward.sh
