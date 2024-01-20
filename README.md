@@ -1,5 +1,7 @@
 # bms 图书管理系统
 
+[![deploy bms](https://github.com/paigeman/bms/actions/workflows/deploy.yml/badge.svg)](https://github.com/paigeman/bms/actions/workflows/deploy.yml)
+
 ## demo
 https://bms.yzj.icu/view/index
 
